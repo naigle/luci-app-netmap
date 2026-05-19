@@ -2,7 +2,7 @@
 
 A visual network topology dashboard for OpenWrt. Scans your home network, identifies every device by type, and renders an interactive SVG map grouped by interface (wired, 2.4 GHz, 5 GHz).
 
-![Network Map screenshot placeholder](https://via.placeholder.com/800x400?text=Network+Map+Dashboard)
+[assets/screenshot.png]
 
 ## Features
 

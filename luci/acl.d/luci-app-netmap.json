@@ -1,0 +1,15 @@
+{
+	"luci-app-netmap": {
+		"description": "Grant access to Network Map dashboard",
+		"read": {
+			"ubus": {
+				"luci.netmap": [ "get_devices", "get_status" ]
+			}
+		},
+		"write": {
+			"ubus": {
+				"luci.netmap": [ "trigger_scan" ]
+			}
+		}
+	}
+}

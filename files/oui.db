@@ -1,0 +1,879 @@
+# OUI prefix database for netmap device classification
+# Format: OUI_PREFIX<TAB>VENDOR_NAME<TAB>DEVICE_TYPE_HINT
+# OUI_PREFIX = first 6 hex chars of MAC, uppercase, no separators
+# DEVICE_TYPE_HINT: computer|phone_apple|phone_android|tablet|tv|streaming|
+#                   speaker|printer|gaming|powerline|nas|iot|ap|router|unknown
+#
+# Apple Inc.
+000393	Apple Inc.	phone_apple
+000502	Apple Inc.	phone_apple
+000A27	Apple Inc.	computer
+000A95	Apple Inc.	computer
+000D93	Apple Inc.	computer
+001124	Apple Inc.	computer
+001451	Apple Inc.	computer
+0016CB	Apple Inc.	computer
+0017F2	Apple Inc.	phone_apple
+0019E3	Apple Inc.	phone_apple
+001B63	Apple Inc.	computer
+001CB3	Apple Inc.	phone_apple
+001D4F	Apple Inc.	phone_apple
+001E52	Apple Inc.	phone_apple
+001EC2	Apple Inc.	phone_apple
+001F5B	Apple Inc.	computer
+001FF3	Apple Inc.	phone_apple
+0021E9	Apple Inc.	phone_apple
+002241	Apple Inc.	computer
+002312	Apple Inc.	phone_apple
+002332	Apple Inc.	phone_apple
+0023DF	Apple Inc.	phone_apple
+002436	Apple Inc.	phone_apple
+002500	Apple Inc.	computer
+00254B	Apple Inc.	computer
+0025BC	Apple Inc.	computer
+002608	Apple Inc.	phone_apple
+00264A	Apple Inc.	phone_apple
+0026B0	Apple Inc.	phone_apple
+0026BB	Apple Inc.	computer
+040CCE	Apple Inc.	phone_apple
+041552	Apple Inc.	phone_apple
+041E64	Apple Inc.	phone_apple
+042665	Apple Inc.	phone_apple
+04489A	Apple Inc.	phone_apple
+0452F3	Apple Inc.	phone_apple
+045453	Apple Inc.	phone_apple
+0469F8	Apple Inc.	phone_apple
+04D3CF	Apple Inc.	phone_apple
+080007	Apple Inc.	computer
+086D41	Apple Inc.	phone_apple
+087045	Apple Inc.	phone_apple
+0C3021	Apple Inc.	phone_apple
+0C3E9F	Apple Inc.	phone_apple
+0C4DE9	Apple Inc.	phone_apple
+0C5101	Apple Inc.	phone_apple
+0C74C2	Apple Inc.	phone_apple
+0C771A	Apple Inc.	phone_apple
+0CBC9F	Apple Inc.	phone_apple
+0CD746	Apple Inc.	phone_apple
+101C0C	Apple Inc.	computer
+1040F3	Apple Inc.	phone_apple
+1093E9	Apple Inc.	phone_apple
+109ADD	Apple Inc.	phone_apple
+10DDB1	Apple Inc.	phone_apple
+14109F	Apple Inc.	phone_apple
+14205E	Apple Inc.	phone_apple
+145A05	Apple Inc.	phone_apple
+148FC6	Apple Inc.	phone_apple
+1499E2	Apple Inc.	phone_apple
+14BD61	Apple Inc.	phone_apple
+182032	Apple Inc.	phone_apple
+183451	Apple Inc.	phone_apple
+186590	Apple Inc.	phone_apple
+18810E	Apple Inc.	phone_apple
+189EFC	Apple Inc.	phone_apple
+18AF61	Apple Inc.	phone_apple
+18E7F4	Apple Inc.	phone_apple
+1C1AC0	Apple Inc.	phone_apple
+1C36BB	Apple Inc.	phone_apple
+1C9148	Apple Inc.	phone_apple
+1CABA7	Apple Inc.	phone_apple
+2078F0	Apple Inc.	phone_apple
+207D74	Apple Inc.	phone_apple
+209BCD	Apple Inc.	phone_apple
+20A2E4	Apple Inc.	phone_apple
+20AB37	Apple Inc.	phone_apple
+20C9D0	Apple Inc.	phone_apple
+241EEB	Apple Inc.	phone_apple
+24240E	Apple Inc.	phone_apple
+245BA7	Apple Inc.	phone_apple
+24A074	Apple Inc.	phone_apple
+24AB81	Apple Inc.	phone_apple
+280B5C	Apple Inc.	phone_apple
+283737	Apple Inc.	phone_apple
+286AB8	Apple Inc.	phone_apple
+28A02B	Apple Inc.	phone_apple
+28CFDA	Apple Inc.	phone_apple
+28CFE9	Apple Inc.	phone_apple
+28E02C	Apple Inc.	phone_apple
+2C1F23	Apple Inc.	phone_apple
+2C200B	Apple Inc.	phone_apple
+2CBE08	Apple Inc.	phone_apple
+2CF0A2	Apple Inc.	phone_apple
+3010E4	Apple Inc.	computer
+3035AD	Apple Inc.	phone_apple
+30636B	Apple Inc.	phone_apple
+3090AB	Apple Inc.	phone_apple
+30D6C9	Apple Inc.	phone_apple
+30F7C5	Apple Inc.	phone_apple
+340CBC	Apple Inc.	phone_apple
+341298	Apple Inc.	phone_apple
+34159E	Apple Inc.	phone_apple
+34363B	Apple Inc.	phone_apple
+34A395	Apple Inc.	phone_apple
+34AB37	Apple Inc.	phone_apple
+34C059	Apple Inc.	phone_apple
+380F4A	Apple Inc.	phone_apple
+38484C	Apple Inc.	phone_apple
+3866F0	Apple Inc.	phone_apple
+3871DE	Apple Inc.	phone_apple
+38892C	Apple Inc.	phone_apple
+38B54D	Apple Inc.	phone_apple
+38C986	Apple Inc.	phone_apple
+3C0754	Apple Inc.	phone_apple
+3C15C2	Apple Inc.	phone_apple
+3C2EF9	Apple Inc.	phone_apple
+3CD0F8	Apple Inc.	phone_apple
+403004	Apple Inc.	computer
+40331A	Apple Inc.	phone_apple
+403CFC	Apple Inc.	phone_apple
+404D7F	Apple Inc.	phone_apple
+406C8F	Apple Inc.	phone_apple
+40831D	Apple Inc.	phone_apple
+409C28	Apple Inc.	phone_apple
+40A6D9	Apple Inc.	phone_apple
+40B395	Apple Inc.	phone_apple
+40BC60	Apple Inc.	phone_apple
+40D32D	Apple Inc.	phone_apple
+44001E	Apple Inc.	phone_apple
+442A60	Apple Inc.	phone_apple
+444C0C	Apple Inc.	phone_apple
+44D884	Apple Inc.	phone_apple
+44FB42	Apple Inc.	phone_apple
+48437C	Apple Inc.	phone_apple
+4860BC	Apple Inc.	phone_apple
+48746E	Apple Inc.	phone_apple
+48A195	Apple Inc.	phone_apple
+48BF6B	Apple Inc.	phone_apple
+48D705	Apple Inc.	phone_apple
+4C3275	Apple Inc.	phone_apple
+4C57CA	Apple Inc.	phone_apple
+4C74BF	Apple Inc.	phone_apple
+4C7C5F	Apple Inc.	phone_apple
+4C8D79	Apple Inc.	phone_apple
+4CB199	Apple Inc.	phone_apple
+503275	Apple Inc.	phone_apple
+507A55	Apple Inc.	phone_apple
+5082D5	Apple Inc.	phone_apple
+50A67F	Apple Inc.	phone_apple
+50BC96	Apple Inc.	phone_apple
+50EAD6	Apple Inc.	phone_apple
+542696	Apple Inc.	phone_apple
+5433CB	Apple Inc.	phone_apple
+544E90	Apple Inc.	phone_apple
+54724F	Apple Inc.	phone_apple
+549F13	Apple Inc.	phone_apple
+54AE27	Apple Inc.	phone_apple
+54E43A	Apple Inc.	phone_apple
+581FAA	Apple Inc.	phone_apple
+58404E	Apple Inc.	phone_apple
+5855CA	Apple Inc.	phone_apple
+587F57	Apple Inc.	phone_apple
+58E28F	Apple Inc.	phone_apple
+5C0947	Apple Inc.	phone_apple
+5C5948	Apple Inc.	phone_apple
+5C8D4E	Apple Inc.	phone_apple
+5C95AE	Apple Inc.	phone_apple
+5C97F3	Apple Inc.	phone_apple
+5CF5DA	Apple Inc.	phone_apple
+600308	Apple Inc.	phone_apple
+60334B	Apple Inc.	phone_apple
+606944	Apple Inc.	phone_apple
+609AC1	Apple Inc.	phone_apple
+60C547	Apple Inc.	phone_apple
+60D9C7	Apple Inc.	phone_apple
+60F445	Apple Inc.	phone_apple
+60F81D	Apple Inc.	phone_apple
+60FACD	Apple Inc.	phone_apple
+64200C	Apple Inc.	computer
+6476BA	Apple Inc.	phone_apple
+649ABE	Apple Inc.	phone_apple
+64A3CB	Apple Inc.	phone_apple
+64B9E8	Apple Inc.	phone_apple
+680927	Apple Inc.	phone_apple
+685B35	Apple Inc.	phone_apple
+68644B	Apple Inc.	phone_apple
+689C70	Apple Inc.	phone_apple
+68A86D	Apple Inc.	phone_apple
+68AB1E	Apple Inc.	phone_apple
+68AE20	Apple Inc.	phone_apple
+68D93C	Apple Inc.	phone_apple
+68DBCA	Apple Inc.	phone_apple
+68FB7E	Apple Inc.	phone_apple
+6C19C0	Apple Inc.	phone_apple
+6C4008	Apple Inc.	phone_apple
+6C709F	Apple Inc.	phone_apple
+6C72E7	Apple Inc.	phone_apple
+6C94F8	Apple Inc.	phone_apple
+6C96CF	Apple Inc.	phone_apple
+6CC26B	Apple Inc.	phone_apple
+6CE85C	Apple Inc.	phone_apple
+7014A6	Apple Inc.	phone_apple
+703EAC	Apple Inc.	phone_apple
+705681	Apple Inc.	phone_apple
+7073CB	Apple Inc.	phone_apple
+7081EB	Apple Inc.	phone_apple
+70A2B3	Apple Inc.	phone_apple
+70CD60	Apple Inc.	phone_apple
+70DEE2	Apple Inc.	phone_apple
+741BB2	Apple Inc.	phone_apple
+74E2F5	Apple Inc.	phone_apple
+7831C1	Apple Inc.	phone_apple
+784F43	Apple Inc.	phone_apple
+7867D7	Apple Inc.	phone_apple
+786C1C	Apple Inc.	phone_apple
+787B8A	Apple Inc.	phone_apple
+78A3E4	Apple Inc.	phone_apple
+78D75F	Apple Inc.	phone_apple
+78FD94	Apple Inc.	phone_apple
+7C04D0	Apple Inc.	phone_apple
+7C5CF8	Apple Inc.	phone_apple
+7C6D62	Apple Inc.	phone_apple
+7CC3A1	Apple Inc.	phone_apple
+7CD1C3	Apple Inc.	phone_apple
+7CFADF	Apple Inc.	phone_apple
+80006E	Apple Inc.	phone_apple
+804971	Apple Inc.	computer
+806C1B	Apple Inc.	phone_apple
+808223	Apple Inc.	phone_apple
+80929F	Apple Inc.	phone_apple
+80B03D	Apple Inc.	phone_apple
+80ED2C	Apple Inc.	phone_apple
+842999	Apple Inc.	phone_apple
+843835	Apple Inc.	phone_apple
+848506	Apple Inc.	phone_apple
+8489AD	Apple Inc.	phone_apple
+848EDF	Apple Inc.	phone_apple
+84B153	Apple Inc.	phone_apple
+84FCFE	Apple Inc.	computer
+881FA1	Apple Inc.	phone_apple
+885395	Apple Inc.	phone_apple
+8863DF	Apple Inc.	phone_apple
+88CB87	Apple Inc.	phone_apple
+88E87F	Apple Inc.	phone_apple
+8C006D	Apple Inc.	phone_apple
+8C2DAA	Apple Inc.	phone_apple
+8C5877	Apple Inc.	phone_apple
+8C7C92	Apple Inc.	phone_apple
+8C7F62	Apple Inc.	phone_apple
+8C8590	Apple Inc.	phone_apple
+8C8D28	Apple Inc.	phone_apple
+9027E4	Apple Inc.	computer
+903C92	Apple Inc.	phone_apple
+9060F1	Apple Inc.	phone_apple
+907240	Apple Inc.	phone_apple
+908D6C	Apple Inc.	phone_apple
+90B0ED	Apple Inc.	phone_apple
+90FD61	Apple Inc.	phone_apple
+94BF2D	Apple Inc.	phone_apple
+94E96A	Apple Inc.	phone_apple
+94F6A3	Apple Inc.	phone_apple
+9800C6	Apple Inc.	phone_apple
+9801A7	Apple Inc.	phone_apple
+98460A	Apple Inc.	phone_apple
+985AEB	Apple Inc.	phone_apple
+98CA33	Apple Inc.	phone_apple
+98D6BB	Apple Inc.	phone_apple
+98E0D9	Apple Inc.	phone_apple
+98F0AB	Apple Inc.	phone_apple
+9C04EB	Apple Inc.	phone_apple
+9C207B	Apple Inc.	phone_apple
+9C35EB	Apple Inc.	phone_apple
+9C4FDA	Apple Inc.	phone_apple
+9C84BF	Apple Inc.	phone_apple
+9CFC01	Apple Inc.	computer
+A011FA	Apple Inc.	phone_apple
+A03BE3	Apple Inc.	phone_apple
+A04EA7	Apple Inc.	phone_apple
+A07817	Apple Inc.	phone_apple
+A0999B	Apple Inc.	phone_apple
+A0D795	Apple Inc.	phone_apple
+A43135	Apple Inc.	phone_apple
+A45E60	Apple Inc.	phone_apple
+A46706	Apple Inc.	phone_apple
+A4B197	Apple Inc.	phone_apple
+A4C3F0	Apple Inc.	phone_apple
+A4D18C	Apple Inc.	phone_apple
+A4D931	Apple Inc.	phone_apple
+A4F1E8	Apple Inc.	phone_apple
+A82066	Apple Inc.	phone_apple
+A85B78	Apple Inc.	phone_apple
+A8667F	Apple Inc.	phone_apple
+A886DD	Apple Inc.	phone_apple
+A88808	Apple Inc.	phone_apple
+A8968A	Apple Inc.	phone_apple
+A8BBCF	Apple Inc.	phone_apple
+A8BE27	Apple Inc.	phone_apple
+AC1F74	Apple Inc.	phone_apple
+AC293A	Apple Inc.	phone_apple
+AC3C0B	Apple Inc.	phone_apple
+AC61EA	Apple Inc.	phone_apple
+AC7F3E	Apple Inc.	phone_apple
+AC87A3	Apple Inc.	phone_apple
+ACBC32	Apple Inc.	phone_apple
+ACCF5C	Apple Inc.	phone_apple
+B019C6	Apple Inc.	phone_apple
+B03495	Apple Inc.	phone_apple
+B065BD	Apple Inc.	phone_apple
+B06EBF	Apple Inc.	phone_apple
+B0702D	Apple Inc.	phone_apple
+B09FBA	Apple Inc.	phone_apple
+B0CA68	Apple Inc.	phone_apple
+B0D09C	Apple Inc.	phone_apple
+B418D1	Apple Inc.	phone_apple
+B44BD2	Apple Inc.	phone_apple
+B48B19	Apple Inc.	phone_apple
+B4F0AB	Apple Inc.	phone_apple
+B8098A	Apple Inc.	phone_apple
+B817C2	Apple Inc.	phone_apple
+B853AC	Apple Inc.	phone_apple
+B8634D	Apple Inc.	phone_apple
+B88D12	Apple Inc.	phone_apple
+B8C75D	Apple Inc.	phone_apple
+B8E856	Apple Inc.	phone_apple
+BC3BAF	Apple Inc.	phone_apple
+BC4CC4	Apple Inc.	phone_apple
+BC52B7	Apple Inc.	phone_apple
+BC5436	Apple Inc.	phone_apple
+BC6778	Apple Inc.	phone_apple
+BC9FEF	Apple Inc.	phone_apple
+C01ADA	Apple Inc.	phone_apple
+C06394	Apple Inc.	phone_apple
+C0847A	Apple Inc.	phone_apple
+C09F42	Apple Inc.	phone_apple
+C0A53E	Apple Inc.	phone_apple
+C0CECD	Apple Inc.	phone_apple
+C0D012	Apple Inc.	phone_apple
+C42C03	Apple Inc.	phone_apple
+C4618B	Apple Inc.	phone_apple
+C46AB7	Apple Inc.	phone_apple
+C4B301	Apple Inc.	phone_apple
+C81EE7	Apple Inc.	phone_apple
+C82A14	Apple Inc.	phone_apple
+C8334B	Apple Inc.	phone_apple
+C83C85	Apple Inc.	phone_apple
+C86F1D	Apple Inc.	phone_apple
+C88550	Apple Inc.	phone_apple
+C8BCCE	Apple Inc.	phone_apple
+C8BFFE	Apple Inc.	phone_apple
+CC088D	Apple Inc.	phone_apple
+CC20E8	Apple Inc.	phone_apple
+CC25EF	Apple Inc.	phone_apple
+CC29F5	Apple Inc.	phone_apple
+CC4463	Apple Inc.	phone_apple
+CC785F	Apple Inc.	phone_apple
+CCC760	Apple Inc.	phone_apple
+D0034B	Apple Inc.	phone_apple
+D023DB	Apple Inc.	phone_apple
+D02598	Apple Inc.	phone_apple
+D03311	Apple Inc.	phone_apple
+D04F7E	Apple Inc.	phone_apple
+D065CA	Apple Inc.	phone_apple
+D0817A	Apple Inc.	phone_apple
+D0A637	Apple Inc.	phone_apple
+D0C5F3	Apple Inc.	phone_apple
+D4619D	Apple Inc.	phone_apple
+D49A20	Apple Inc.	phone_apple
+D4F46F	Apple Inc.	phone_apple
+D8004D	Apple Inc.	phone_apple
+D81D72	Apple Inc.	phone_apple
+D83062	Apple Inc.	phone_apple
+D89695	Apple Inc.	phone_apple
+D8A25E	Apple Inc.	phone_apple
+D8BB2C	Apple Inc.	phone_apple
+D8CF9C	Apple Inc.	phone_apple
+D8D1CB	Apple Inc.	phone_apple
+DC0C5C	Apple Inc.	phone_apple
+DC2B2A	Apple Inc.	phone_apple
+DC3714	Apple Inc.	phone_apple
+DC415F	Apple Inc.	phone_apple
+DC86D8	Apple Inc.	phone_apple
+DCA4CA	Apple Inc.	phone_apple
+DCB121	Apple Inc.	phone_apple
+E0338E	Apple Inc.	phone_apple
+E05F45	Apple Inc.	phone_apple
+E06678	Apple Inc.	phone_apple
+E0B55F	Apple Inc.	phone_apple
+E0C767	Apple Inc.	phone_apple
+E0C97A	Apple Inc.	phone_apple
+E0F5C6	Apple Inc.	phone_apple
+E425E7	Apple Inc.	phone_apple
+E42B34	Apple Inc.	phone_apple
+E498D6	Apple Inc.	phone_apple
+E4C63D	Apple Inc.	phone_apple
+E4CE8F	Apple Inc.	phone_apple
+E4E4AB	Apple Inc.	phone_apple
+E8040B	Apple Inc.	phone_apple
+E80688	Apple Inc.	phone_apple
+E8802E	Apple Inc.	phone_apple
+E8B2AC	Apple Inc.	phone_apple
+EC3586	Apple Inc.	phone_apple
+EC852F	Apple Inc.	phone_apple
+F01898	Apple Inc.	phone_apple
+F023B9	Apple Inc.	phone_apple
+F02475	Apple Inc.	phone_apple
+F02F4B	Apple Inc.	phone_apple
+F04078	Apple Inc.	phone_apple
+F07960	Apple Inc.	phone_apple
+F099B6	Apple Inc.	phone_apple
+F0B479	Apple Inc.	phone_apple
+F0CBA1	Apple Inc.	phone_apple
+F0D1A9	Apple Inc.	phone_apple
+F0DBE2	Apple Inc.	phone_apple
+F0F61C	Apple Inc.	phone_apple
+F40F24	Apple Inc.	phone_apple
+F41BA1	Apple Inc.	phone_apple
+F431C3	Apple Inc.	phone_apple
+F437B7	Apple Inc.	phone_apple
+F44B2A	Apple Inc.	phone_apple
+F45C89	Apple Inc.	phone_apple
+F4977C	Apple Inc.	phone_apple
+F4DBE6	Apple Inc.	phone_apple
+F4F15A	Apple Inc.	phone_apple
+F4F951	Apple Inc.	phone_apple
+F80377	Apple Inc.	computer
+F81EDF	Apple Inc.	phone_apple
+F82793	Apple Inc.	phone_apple
+F82D7C	Apple Inc.	phone_apple
+F83880	Apple Inc.	phone_apple
+F84D89	Apple Inc.	phone_apple
+F854B8	Apple Inc.	phone_apple
+F86214	Apple Inc.	phone_apple
+F887F1	Apple Inc.	computer
+FC253F	Apple Inc.	phone_apple
+FC2A9C	Apple Inc.	phone_apple
+FCE998	Apple Inc.	phone_apple
+FCFC48	Apple Inc.	phone_apple
+#
+# Samsung Electronics (phones, tablets, TVs, IoT)
+001247	Samsung Electronics	phone_android
+0015B9	Samsung Electronics	phone_android
+001632	Samsung Electronics	phone_android
+0016DB	Samsung Electronics	phone_android
+001799	Samsung Electronics	phone_android
+0017C9	Samsung Electronics	phone_android
+001A8A	Samsung Electronics	phone_android
+001C43	Samsung Electronics	phone_android
+001D25	Samsung Electronics	phone_android
+001E7D	Samsung Electronics	phone_android
+001FCC	Samsung Electronics	phone_android
+002339	Samsung Electronics	phone_android
+0024E9	Samsung Electronics	phone_android
+00265D	Samsung Electronics	phone_android
+002566	Samsung Electronics	phone_android
+0026E6	Samsung Electronics	phone_android
+1C62B8	Samsung Electronics	tv
+2C0E3D	Samsung Electronics	tv
+34145F	Samsung Electronics	phone_android
+382DD1	Samsung Electronics	phone_android
+3C5A37	Samsung Electronics	phone_android
+40F3D9	Samsung Electronics	phone_android
+5C3C27	Samsung Electronics	phone_android
+609A51	Samsung Electronics	phone_android
+6C2F2C	Samsung Electronics	phone_android
+6C8336	Samsung Electronics	phone_android
+749077	Samsung Electronics	phone_android
+78472E	Samsung Electronics	tv
+784B87	Samsung Electronics	phone_android
+7C0BC6	Samsung Electronics	phone_android
+840BBB	Samsung Electronics	phone_android
+8438DD	Samsung Electronics	phone_android
+8C7712	Samsung Electronics	tv
+94350A	Samsung Electronics	phone_android
+94D7B5	Samsung Electronics	phone_android
+98F170	Samsung Electronics	tv
+A4EB D3	Samsung Electronics	phone_android
+A4EBD3	Samsung Electronics	phone_android
+A88195	Samsung Electronics	phone_android
+BC4760	Samsung Electronics	phone_android
+C4731E	Samsung Electronics	phone_android
+C4888E	Samsung Electronics	phone_android
+C81479	Samsung Electronics	phone_android
+CC0772	Samsung Electronics	phone_android
+D0176A	Samsung Electronics	phone_android
+D0DFAA	Samsung Electronics	phone_android
+D487D8	Samsung Electronics	phone_android
+DC7144	Samsung Electronics	tv
+E898B4	Samsung Electronics	phone_android
+EC1F72	Samsung Electronics	phone_android
+F0259C	Samsung Electronics	phone_android
+F4428F	Samsung Electronics	phone_android
+F49F54	Samsung Electronics	phone_android
+F8042E	Samsung Electronics	phone_android
+FC1993	Samsung Electronics	phone_android
+FCDB96	Samsung Electronics	phone_android
+#
+# Google LLC (Pixel phones, Chromecast, Nest, Home)
+54600A	Google Inc.	phone_android
+F4F5D8	Google Inc.	streaming
+3C5AB4	Google Inc.	streaming
+E4F0C8	Google Inc.	streaming
+A47733	Google Inc.	streaming
+1C2315	Google Inc.	streaming
+F0EF86	Google Inc.	iot
+904E2B	Google Inc.	iot
+6C4008	Google Inc.	iot
+#
+# Amazon (Echo, Fire TV, Kindle)
+FC65DE	Amazon Technologies	speaker
+A408F5	Amazon Technologies	speaker
+747548	Amazon Technologies	streaming
+0C47C9	Amazon Technologies	streaming
+38F73D	Amazon Technologies	streaming
+84D6D0	Amazon Technologies	streaming
+B47C9C	Amazon Technologies	speaker
+68371C	Amazon Technologies	speaker
+#
+# Microsoft (Surface, Xbox, Windows PCs)
+0003FF	Microsoft Corporation	computer
+001DD8	Microsoft Corporation	computer
+002248	Microsoft Corporation	computer
+0025AE	Microsoft Corporation	computer
+003080	Microsoft Corporation	computer
+205EF7	Microsoft Corporation	computer
+28187E	Microsoft Corporation	gaming
+484454	Microsoft Corporation	computer
+506772	Microsoft Corporation	computer
+6045BD	Microsoft Corporation	computer
+7C1E52	Microsoft Corporation	gaming
+984FEE	Microsoft Corporation	computer
+C8D9D2	Microsoft Corporation	computer
+D05099	Microsoft Corporation	computer
+#
+# Sony (PlayStation, TVs, Xperia phones)
+0013A9	Sony Corporation	gaming
+001A80	Sony Corporation	tv
+002137	Sony Corporation	gaming
+3017C8	Sony Corporation	tv
+3C0771	Sony Corporation	gaming
+40B883	Sony Corporation	tv
+70351A	Sony Corporation	gaming
+7052C5	Sony Corporation	tv
+78843C	Sony Corporation	phone_android
+ACCDD7	Sony Corporation	gaming
+B4524B	Sony Corporation	gaming
+C8E0EB	Sony Corporation	gaming
+#
+# LG Electronics (phones, TVs)
+001E75	LG Electronics	tv
+002483	LG Electronics	tv
+006F64	LG Electronics	tv
+08F495	LG Electronics	tv
+10F96F	LG Electronics	tv
+1418C3	LG Electronics	tv
+28B4B9	LG Electronics	phone_android
+34E2FD	LG Electronics	tv
+40B0FA	LG Electronics	tv
+50C7BF	LG Electronics	tv
+B4E17D	LG Electronics	tv
+C4366C	LG Electronics	tv
+C803F5	LG Electronics	tv
+CC2D8B	LG Electronics	tv
+D858D7	LG Electronics	tv
+F832E4	LG Electronics	tv
+#
+# Sonos (speakers)
+000E58	Sonos Inc.	speaker
+5CAAFE	Sonos Inc.	speaker
+78282E	Sonos Inc.	speaker
+94901A	Sonos Inc.	speaker
+B8E937	Sonos Inc.	speaker
+#
+# Roku
+B0A737	Roku Inc.	streaming
+D4DCCD	Roku Inc.	streaming
+DC3A5E	Roku Inc.	streaming
+#
+# Amazon Fire TV / Firestick (additional)
+74ECB2	Amazon Technologies	streaming
+#
+# Nintendo (Switch, Wii, DS)
+002709	Nintendo Co. Ltd.	gaming
+0009BF	Nintendo Co. Ltd.	gaming
+00197D	Nintendo Co. Ltd.	gaming
+001F32	Nintendo Co. Ltd.	gaming
+002659	Nintendo Co. Ltd.	gaming
+7F3AEA	Nintendo Co. Ltd.	gaming
+E00C7F	Nintendo Co. Ltd.	gaming
+#
+# HP (printers, laptops)
+001083	Hewlett-Packard	printer
+001560	Hewlett-Packard	printer
+0017A4	Hewlett-Packard	printer
+001A4B	Hewlett-Packard	printer
+001B78	Hewlett-Packard	printer
+001CC4	Hewlett-Packard	printer
+0024E8	Hewlett-Packard	printer
+002655	Hewlett-Packard	printer
+0021F7	Hewlett-Packard	computer
+10604B	Hewlett-Packard	printer
+18A905	Hewlett-Packard	printer
+200BC7	Hewlett-Packard	printer
+2430EC	Hewlett-Packard	printer
+286ED4	Hewlett-Packard	printer
+380053	Hewlett-Packard	printer
+3C4A92	Hewlett-Packard	printer
+48022A	Hewlett-Packard	printer
+502FA8	Hewlett-Packard	computer
+784B87	Hewlett-Packard	printer
+885D90	Hewlett-Packard	printer
+94571A	Hewlett-Packard	printer
+9CB70D	Hewlett-Packard	printer
+A0D3C1	Hewlett-Packard	printer
+B499BA	Hewlett-Packard	printer
+D8D385	Hewlett-Packard	printer
+E8AEA2	Hewlett-Packard	printer
+F45C89	Hewlett-Packard	printer
+FC3FDB	Hewlett-Packard	printer
+#
+# Canon
+00006C	Canon Inc.	printer
+000085	Canon Inc.	printer
+0000C6	Canon Inc.	printer
+0000EB	Canon Inc.	printer
+00001E	Canon Inc.	printer
+001544	Canon Inc.	printer
+0C1878	Canon Inc.	printer
+14490C	Canon Inc.	printer
+1C9E46	Canon Inc.	printer
+28CEF9	Canon Inc.	printer
+3C0301	Canon Inc.	printer
+90B11C	Canon Inc.	printer
+BCAD28	Canon Inc.	printer
+#
+# Epson
+001788	Seiko Epson Corporation	printer
+002763	Seiko Epson Corporation	printer
+0026AB	Seiko Epson Corporation	printer
+2CF435	Seiko Epson Corporation	printer
+44D224	Seiko Epson Corporation	printer
+64EB8C	Seiko Epson Corporation	printer
+8CB2AD	Seiko Epson Corporation	printer
+B0485A	Seiko Epson Corporation	printer
+#
+# Brother
+001BA9	Brother Industries	printer
+00807F	Brother Industries	printer
+00808D	Brother Industries	printer
+001EF7	Brother Industries	printer
+30055C	Brother Industries	printer
+5C0A5B	Brother Industries	printer
+708B58	Brother Industries	printer
+#
+# Netgear
+00095B	Netgear Inc.	ap
+000FB5	Netgear Inc.	ap
+001B2F	Netgear Inc.	ap
+0026F2	Netgear Inc.	ap
+04A181	Netgear Inc.	ap
+20E52A	Netgear Inc.	ap
+2C3033	Netgear Inc.	ap
+44944E	Netgear Inc.	ap
+6CB0CE	Netgear Inc.	ap
+84C9B2	Netgear Inc.	ap
+A040A0	Netgear Inc.	ap
+C09110	Netgear Inc.	ap
+E091F5	Netgear Inc.	ap
+#
+# TP-Link (routers, APs, powerline)
+001EE5	TP-Link Technologies	ap
+0025BA	TP-Link Technologies	ap
+14CC20	TP-Link Technologies	ap
+1C61B4	TP-Link Technologies	ap
+30B49E	TP-Link Technologies	ap
+50C7BF	TP-Link Technologies	ap
+54AF97	TP-Link Technologies	ap
+60E3274	TP-Link Technologies	ap
+74EA3A	TP-Link Technologies	ap
+78D21E	TP-Link Technologies	ap
+80EA96	TP-Link Technologies	ap
+98DAC4	TP-Link Technologies	ap
+A42BB0	TP-Link Technologies	ap
+C025A2	TP-Link Technologies	ap
+E8DE27	TP-Link Technologies	ap
+F09FC2	TP-Link Technologies	ap
+#
+# TP-Link Powerline
+50C7BF	TP-Link Technologies	powerline
+30B49E	TP-Link Technologies	powerline
+#
+# devolo (powerline)
+0019DB	Devolo AG	powerline
+0022B0	Devolo AG	powerline
+442277	Devolo AG	powerline
+BC4786	Devolo AG	powerline
+#
+# Asus (routers, phones, PCs)
+049226	ASUSTeK Computer	computer
+04D4C4	ASUSTeK Computer	computer
+08606E	ASUSTeK Computer	computer
+0C9D92	ASUSTeK Computer	ap
+1062EB	ASUSTeK Computer	ap
+107B44	ASUSTeK Computer	computer
+14DDA9	ASUSTeK Computer	computer
+1C872C	ASUSTeK Computer	ap
+2C56DC	ASUSTeK Computer	computer
+30852D	ASUSTeK Computer	ap
+40167E	ASUSTeK Computer	ap
+485B39	ASUSTeK Computer	computer
+50465D	ASUSTeK Computer	computer
+54A050	ASUSTeK Computer	ap
+74D02B	ASUSTeK Computer	ap
+788CB5	ASUSTeK Computer	ap
+88D7F6	ASUSTeK Computer	ap
+9C5C8E	ASUSTeK Computer	ap
+ACBC32	ASUSTeK Computer	computer
+E03F49	ASUSTeK Computer	ap
+#
+# Ubiquiti (enterprise APs)
+00156D	Ubiquiti Networks	ap
+0418D6	Ubiquiti Networks	ap
+24A43C	Ubiquiti Networks	ap
+44D9E7	Ubiquiti Networks	ap
+68722D	Ubiquiti Networks	ap
+787A10	Ubiquiti Networks	ap
+788A20	Ubiquiti Networks	ap
+80E4E3	Ubiquiti Networks	ap
+8A28E3	Ubiquiti Networks	ap
+9C8AEE	Ubiquiti Networks	ap
+DC9FDB	Ubiquiti Networks	ap
+E4956E	Ubiquiti Networks	ap
+F09FC2	Ubiquiti Networks	ap
+#
+# Synology (NAS)
+001132	Synology Inc.	nas
+001132	Synology Inc.	nas
+BC3400	Synology Inc.	nas
+#
+# QNAP (NAS)
+245EBE	QNAP Systems	nas
+EC26CA	QNAP Systems	nas
+#
+# Western Digital (NAS, My Cloud)
+000C50	Western Digital Technologies	nas
+001692	Western Digital Technologies	nas
+0024C2	Western Digital Technologies	nas
+2C27D7	Western Digital Technologies	nas
+#
+# Raspberry Pi Foundation (IoT)
+28CDA4	Raspberry Pi Foundation	iot
+B827EB	Raspberry Pi Foundation	iot
+D83ADD	Raspberry Pi Foundation	iot
+E45F01	Raspberry Pi Foundation	iot
+#
+# Espressif (ESP8266, ESP32 - IoT)
+10524E	Espressif Inc.	iot
+18FE34	Espressif Inc.	iot
+240AC4	Espressif Inc.	iot
+2CF432	Espressif Inc.	iot
+3C71BF	Espressif Inc.	iot
+48:3F:DA	Espressif Inc.	iot
+483FDA	Espressif Inc.	iot
+50:02:91	Espressif Inc.	iot
+500291	Espressif Inc.	iot
+5CCF7F	Espressif Inc.	iot
+60019F	Espressif Inc.	iot
+68C63A	Espressif Inc.	iot
+6C8B2F	Espressif Inc.	iot
+7C87CE	Espressif Inc.	iot
+84CCA8	Espressif Inc.	iot
+8C4B14	Espressif Inc.	iot
+90A2DA	Espressif Inc.	iot
+A020A6	Espressif Inc.	iot
+A4CF12	Espressif Inc.	iot
+B4E62D	Espressif Inc.	iot
+BCDDC2	Espressif Inc.	iot
+C44F33	Espressif Inc.	iot
+CC50E3	Espressif Inc.	iot
+D8BFC0	Espressif Inc.	iot
+E89F6D	Espressif Inc.	iot
+ECFABC	Espressif Inc.	iot
+F4CFA2	Espressif Inc.	iot
+#
+# Philips Hue (smart lighting)
+0017C8	Philips Lighting	iot
+ECB5FA	Philips Lighting	iot
+001788	Philips Lighting	iot
+#
+# Nest / Google Home
+18B430	Nest Labs	iot
+64169D	Nest Labs	iot
+64:16:9D	Nest Labs	iot
+#
+# Ring (doorbell/cameras)
+886B0F	Ring LLC	iot
+#
+# Eero (mesh Wi-Fi)
+F49A37	eero Inc.	ap
+#
+# Intel (common in laptops)
+001B21	Intel Corporate	computer
+0019D2	Intel Corporate	computer
+001E65	Intel Corporate	computer
+002510	Intel Corporate	computer
+006475	Intel Corporate	computer
+00CFFC	Intel Corporate	computer
+10027B	Intel Corporate	computer
+282898	Intel Corporate	computer
+3425E2	Intel Corporate	computer
+4CE17A	Intel Corporate	computer
+5CF370	Intel Corporate	computer
+6CCB8B	Intel Corporate	computer
+80861B	Intel Corporate	computer
+84809C	Intel Corporate	computer
+886B6E	Intel Corporate	computer
+8CEC4B	Intel Corporate	computer
+A0369F	Intel Corporate	computer
+A88888	Intel Corporate	computer
+AC7BA1	Intel Corporate	computer
+B03AF2	Intel Corporate	computer
+B8CA3A	Intel Corporate	computer
+C4093E	Intel Corporate	computer
+D85DFB	Intel Corporate	computer
+E8B4C8	Intel Corporate	computer
+F832E4	Intel Corporate	computer
+#
+# Dell
+001422	Dell Inc.	computer
+001A4B	Dell Inc.	computer
+001D09	Dell Inc.	computer
+001E4F	Dell Inc.	computer
+00214D	Dell Inc.	computer
+002219	Dell Inc.	computer
+002564	Dell Inc.	computer
+0024E8	Dell Inc.	computer
+002655	Dell Inc.	computer
+00274B	Dell Inc.	computer
+08002B	Dell Inc.	computer
+14187E	Dell Inc.	computer
+18A99B	Dell Inc.	computer
+1C40AF	Dell Inc.	computer
+2CD05A	Dell Inc.	computer
+3C2C30	Dell Inc.	computer
+44A842	Dell Inc.	computer
+488D36	Dell Inc.	computer
+5CF9DD	Dell Inc.	computer
+6845F7	Dell Inc.	computer
+74863A	Dell Inc.	computer
+848D8E	Dell Inc.	computer
+8CCFA0	Dell Inc.	computer
+9C4E36	Dell Inc.	computer
+A4C3F0	Dell Inc.	computer
+B083FE	Dell Inc.	computer
+B8AC6F	Dell Inc.	computer
+C81F66	Dell Inc.	computer
+D067E5	Dell Inc.	computer
+D48564	Dell Inc.	computer
+F0761C	Dell Inc.	computer
+F48E38	Dell Inc.	computer
+FCAA14	Dell Inc.	computer
+# MikroTik (routers/switches/APs)
+BC2411	MikroTik	ap
+4C5E0C	MikroTik	ap
+6C3B6B	MikroTik	ap
+748FFA	MikroTik	ap
+B8694E	MikroTik	ap
+# Ubiquiti (additional ranges)
+98254A	Ubiquiti Networks	ap
+982548	Ubiquiti Networks	ap
+# Tesla Motors
+4CFCAA	Tesla Motors	unknown

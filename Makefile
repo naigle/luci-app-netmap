@@ -3,7 +3,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=luci-app-netmap
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=1
-PKG_MAINTAINER:=Your Name <you@example.com>
+PKG_MAINTAINER:=naigle <naigle@niversa.co.uk>
 PKG_LICENSE:=GPL-2.0
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
@@ -34,33 +34,32 @@ define Build/Compile
 endef
 
 define Package/luci-app-netmap/install
-	# LuCI controller
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
-	$(INSTALL_DATA) ./luasrc/controller/netmap.lua \
-		$(1)/usr/lib/lua/luci/controller/
-
-	# LuCI view
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/netmap
-	$(INSTALL_DATA) ./luasrc/view/netmap/dashboard.htm \
-		$(1)/usr/lib/lua/luci/view/netmap/
-
-	# Static web assets
-	$(INSTALL_DIR) $(1)/www/luci-static/resources/netmap
-	$(INSTALL_DATA) ./htdocs/luci-static/resources/netmap/app.js \
-		$(1)/www/luci-static/resources/netmap/
-	$(INSTALL_DATA) ./htdocs/luci-static/resources/netmap/style.css \
-		$(1)/www/luci-static/resources/netmap/
-
-	# Scanner + OUI database
+	# Scan script and ucode assembler
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./files/netmap.scan $(1)/usr/bin/netmap-scan
 
 	$(INSTALL_DIR) $(1)/usr/share/netmap
+	$(INSTALL_DATA) ./files/netmap-assemble.uc $(1)/usr/share/netmap/assemble.uc
 	$(INSTALL_DATA) ./files/oui.db $(1)/usr/share/netmap/oui.db
 
 	# Init / service script
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/netmap.init $(1)/etc/init.d/netmap
+
+	# rpcd ucode handler + ACL + menu
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/ucode
+	$(INSTALL_DATA) ./luci/rpcd/luci.netmap $(1)/usr/share/rpcd/ucode/luci.netmap
+
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
+	$(INSTALL_DATA) ./luci/acl.d/luci-app-netmap.json $(1)/usr/share/rpcd/acl.d/luci-app-netmap.json
+
+	$(INSTALL_DIR) $(1)/usr/share/luci/menu.d
+	$(INSTALL_DATA) ./luci/menu.d/luci-app-netmap.json $(1)/usr/share/luci/menu.d/luci-app-netmap.json
+
+	# LuCI JS view
+	$(INSTALL_DIR) $(1)/www/luci-static/resources/view/netmap
+	$(INSTALL_DATA) ./www/resources/view/netmap/netmap.js \
+		$(1)/www/luci-static/resources/view/netmap/netmap.js
 
 	# Data directory
 	$(INSTALL_DIR) $(1)/etc/netmap

@@ -122,12 +122,21 @@ const TYPE_COLOR = {
 };
 
 const TYPE_LABEL = {
-	router: 'Router / Gateway', computer: 'Computer / Laptop',
-	phone_apple: 'iPhone / Apple Device', phone_android: 'Android Phone',
-	tablet: 'Tablet', tv: 'Smart TV', streaming: 'Streaming Device',
-	speaker: 'Smart Speaker', printer: 'Printer', gaming: 'Games Console',
-	powerline: 'Powerline Adapter', nas: 'NAS / Server',
-	iot: 'IoT / Smart Home', ap: 'Access Point', unknown: 'Unknown',
+	router: _('Router / Gateway'), computer: _('Computer / Laptop'),
+	phone_apple: _('iPhone / Apple Device'), phone_android: _('Android Phone'),
+	tablet: _('Tablet'), tv: _('Smart TV'), streaming: _('Streaming Device'),
+	speaker: _('Smart Speaker'), printer: _('Printer'), gaming: _('Games Console'),
+	powerline: _('Powerline Adapter'), nas: _('NAS / Server'),
+	iot: _('IoT / Smart Home'), ap: _('Access Point'), unknown: _('Unknown'),
+};
+
+// Interface display name translations
+const IFACE_LABEL = {
+	'Wired (Ethernet)': _('Wired (Ethernet)'),
+	'wired': _('Wired'),
+	'wifi': _('WiFi'),
+	'lan': _('LAN'),
+	'wan': _('WAN'),
 };
 
 // ============================================================
@@ -181,7 +190,7 @@ const CSS = `
 .nm-node:hover .nm-node-bg{opacity:.15}
 .nm-node-bg{fill:currentColor;opacity:0;transition:opacity .15s}
 .nm-lbl{font-size:11px;fill:var(--text-color,#333);text-anchor:middle;pointer-events:none;font-family:sans-serif}
-.nm-lbl-ip{font-size:9px;fill:var(--muted-color,#999);text-anchor:middle;pointer-events:none;font-family:sans-serif}
+.nm-lbl-ip{font-size:8px;fill:var(--muted-color,#888);text-anchor:middle;pointer-events:none;font-family:sans-serif}
 .nm-grp-lbl{font-size:11px;fill:var(--muted-color,#666);text-anchor:middle;font-family:sans-serif;font-weight:600}
 .nm-edge{stroke:var(--border-color,#ccc);stroke-width:1.5;fill:none}
 .nm-edge-w{stroke:#90caf9;stroke-dasharray:4 3}
@@ -208,15 +217,19 @@ function esc(s) {
 function fmtRel(iso) {
 	if (!iso) return '';
 	const m = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
-	if (m < 1)  return 'just now';
-	if (m < 60) return `${m}m ago`;
+	if (m < 1)  return _('just now');
+	if (m < 60) return _('%dm ago').format(m);
 	const h = Math.floor(m / 60);
-	return h < 24 ? `${h}h ago` : `${Math.floor(h/24)}d ago`;
+	return h < 24 ? _('%dh ago').format(h) : _('%dd ago').format(Math.floor(h/24));
 }
 
 function fmtDate(iso) {
 	if (!iso) return '—';
 	try { return new Date(iso).toLocaleString(); } catch { return iso; }
+}
+
+function _n(fmt, val) {
+	return fmt.replace(/%d/, val);
 }
 
 function sigBars(dbm) {
@@ -226,7 +239,7 @@ function sigBars(dbm) {
 	const bars = levels.map(l =>
 		`<span class="nm-sig-b${l.min <= dbm ? ' '+cls : ''}" style="height:${l.h}px"></span>`
 	).join('');
-	return `<span class="nm-sig" title="${dbm} dBm">${bars}</span> ${dbm} dBm`;
+	return `<span class="nm-sig" title="${dbm} dBm">${bars}</span> ${dbm} ` + _('dBm');
 }
 
 function iconSVG(type, size, color) {
@@ -255,8 +268,8 @@ function renderTopology(svg, data, onSelect) {
 	// Only include interfaces that have devices (plus wired always)
 	const groups = ifaces.filter(i => i.name === 'wired' || (byIface[i.name] || []).length > 0);
 
-	const NODE_R  = 26, NODE_W = 68, NODE_H = 82;
-	const GRP_PAD = 20, COL_PAD = 40;
+	const NODE_R  = 26, NODE_W = 75, NODE_H = 95;
+	const GRP_PAD = 24, COL_PAD = 50;
 	const TOP_Y   = 65, GRP_Y  = 170, DEV_COLS = 3;
 
 	let totalW = COL_PAD;
@@ -320,8 +333,8 @@ function renderTopology(svg, data, onSelect) {
 			fill: isWi ? '#e3f2fd' : '#f5f5f5',
 			stroke: isWi ? '#90caf9' : '#bdbdbd', 'stroke-width': '1'
 		}));
-		hG.appendChild(svgEl('text', { x: cx, y: GRP_Y-7, class: 'nm-grp-lbl' },
-			iface.display || iface.name));
+		const displayName = IFACE_LABEL[iface.display] || IFACE_LABEL[iface.name] || iface.display || iface.name;
+		hG.appendChild(svgEl('text', { x: cx, y: GRP_Y-7, class: 'nm-grp-lbl' }, displayName));
 		if (iface.ssid)
 			hG.appendChild(svgEl('text', { x: cx, y: GRP_Y+8, class: 'nm-lbl-ip' },
 				`"${iface.ssid}"`));
@@ -369,10 +382,10 @@ function renderTopology(svg, data, onSelect) {
 					stroke: '#ef9a9a', 'stroke-width': '2', 'stroke-linecap': 'round'
 				}));
 
-			dG.appendChild(svgEl('text', { x: dx, y: dy+NODE_R+13, class: 'nm-lbl' },
+			dG.appendChild(svgEl('text', { x: dx, y: dy+NODE_R+14, class: 'nm-lbl' },
 				label.length > 10 ? label.slice(0,9)+'…' : label));
 			if (dev.ip)
-				dG.appendChild(svgEl('text', { x: dx, y: dy+NODE_R+24, class: 'nm-lbl-ip' }, dev.ip));
+				dG.appendChild(svgEl('text', { x: dx, y: dy+NODE_R+28, class: 'nm-lbl-ip' }, dev.ip));
 
 			dG.addEventListener('click', () => onSelect(dev));
 			svg.appendChild(dG);
@@ -391,19 +404,19 @@ function renderDetail(container, dev) {
 	container.innerHTML =
 		`<div class="nm-detail-icon">${iconSVG(iconKey, 64, color)}</div>` +
 		`<dl class="nm-kv">` +
-		`<dt>Name</dt><dd>${esc(label)}</dd>` +
-		`<dt>Type</dt><dd>${esc(TYPE_LABEL[dev.device_type] || dev.device_type)}</dd>` +
-		`<dt>IP</dt><dd>${esc(dev.ip || '—')}</dd>` +
-		`<dt>MAC</dt><dd>${esc(dev.mac)}</dd>` +
-		`<dt>Vendor</dt><dd>${esc(dev.vendor || '—')}</dd>` +
-		`<dt>Interface</dt><dd>${esc(dev.interface || '—')}</dd>` +
-		(dev.signal != null ? `<dt>Signal</dt><dd>${sigBars(dev.signal)}</dd>` : '') +
-		(dev.tx_rate       ? `<dt>TX rate</dt><dd>${dev.tx_rate} Mbps</dd>`   : '') +
-		(dev.rx_rate       ? `<dt>RX rate</dt><dd>${dev.rx_rate} Mbps</dd>`   : '') +
-		(dev.os_guess      ? `<dt>OS guess</dt><dd>${esc(dev.os_guess)}</dd>` : '') +
-		`<dt>Status</dt><dd class="${dev.online?'nm-online':'nm-offline'}">${dev.online?'● Online':'○ Offline'}</dd>` +
-		`<dt>First seen</dt><dd>${esc(fmtDate(dev.first_seen))}</dd>` +
-		`<dt>Last seen</dt><dd>${esc(fmtDate(dev.last_seen))}</dd>` +
+		`<dt>${_('Name')}</dt><dd>${esc(label)}</dd>` +
+		`<dt>${_('Type')}</dt><dd>${esc(TYPE_LABEL[dev.device_type] || dev.device_type)}</dd>` +
+		`<dt>${_('IP')}</dt><dd>${esc(dev.ip || '—')}</dd>` +
+		`<dt>${_('MAC')}</dt><dd>${esc(dev.mac)}</dd>` +
+		`<dt>${_('Vendor')}</dt><dd>${esc(dev.vendor || '—')}</dd>` +
+		`<dt>${_('Interface')}</dt><dd>${esc(dev.interface || '—')}</dd>` +
+		(dev.signal != null ? `<dt>${_('Signal')}</dt><dd>${sigBars(dev.signal)}</dd>` : '') +
+		(dev.tx_rate       ? `<dt>${_('TX rate')}</dt><dd>${dev.tx_rate} Mbps</dd>`   : '') +
+		(dev.rx_rate       ? `<dt>${_('RX rate')}</dt><dd>${dev.rx_rate} Mbps</dd>`   : '') +
+		(dev.os_guess      ? `<dt>${_('OS guess')}</dt><dd>${esc(dev.os_guess)}</dd>` : '') +
+		`<dt>${_('Status')}</dt><dd class="${dev.online?'nm-online':'nm-offline'}">${dev.online?`● ${_('Online')}`:`○ ${_('Offline')}`}</dd>` +
+		`<dt>${_('First seen')}</dt><dd>${esc(fmtDate(dev.first_seen))}</dd>` +
+		`<dt>${_('Last seen')}</dt><dd>${esc(fmtDate(dev.last_seen))}</dd>` +
 		`</dl>`;
 }
 
@@ -440,7 +453,7 @@ function renderTable(tbody, devices, filter, sortKey, sortDir, onSelect) {
 			<td>${esc(TYPE_LABEL[dev.device_type] || dev.device_type)}</td>
 			<td>${esc(dev.interface || '—')}</td>
 			<td>${sigBars(dev.signal)}</td>
-			<td class="${dev.online?'nm-online':'nm-offline'}">${dev.online?'● Online':'○ Offline'}</td>
+			<td class="${dev.online?'nm-online':'nm-offline'}">${dev.online?`● ${_('Online')}`:`○ ${_('Offline')}`}</td>
 		</tr>`;
 	}).join('');
 
@@ -486,16 +499,16 @@ return view.extend({
 		wrap.innerHTML = `
 <div class="nm-hdr">
   <div class="nm-tb">
-    <span id="nm-st" class="nm-st-idle">Loading…</span>
-    <button id="nm-quick" class="nm-btn nm-btn-p">&#8635; Quick Scan</button>
-    <button id="nm-deep"  class="nm-btn nm-btn-s">&#128269; Deep Scan</button>
-    <label class="nm-tgl"><input type="checkbox" id="nm-ar" checked><span>Auto-refresh</span></label>
+    <span id="nm-st" class="nm-st-idle">${ _('Loading…') }</span>
+    <button id="nm-quick" class="nm-btn nm-btn-p">&#8635; ${ _('Quick Scan') }</button>
+    <button id="nm-deep"  class="nm-btn nm-btn-s">&#128269; ${ _('Deep Scan') }</button>
+    <label class="nm-tgl"><input type="checkbox" id="nm-ar" checked><span>${ _('Auto-refresh') }</span></label>
   </div>
 </div>
 <div class="nm-layout">
   <div class="nm-map-panel">
     <div class="nm-map-hdr">
-      <span>Topology</span>
+      <span>${ _('Topology') }</span>
       <span id="nm-ls" class="nm-muted"></span>
     </div>
     <div id="nm-map-wrap">
@@ -504,7 +517,7 @@ return view.extend({
   </div>
   <div id="nm-detail" class="nm-detail nm-hidden">
     <div class="nm-detail-hdr">
-      <span id="nm-dt-title">Device</span>
+      <span id="nm-dt-title">${ _('Device') }</span>
       <button id="nm-dt-close" class="nm-btn-x">&#10005;</button>
     </div>
     <div id="nm-dt-body" class="nm-detail-body"></div>
@@ -512,20 +525,20 @@ return view.extend({
 </div>
 <div class="nm-tbl-panel">
   <div class="nm-tbl-hdr">
-    <span>All Devices (<span id="nm-cnt">0</span>)</span>
-    <input id="nm-filter" type="text" class="nm-search" placeholder="Filter by name, IP, MAC, type…">
+    <span>${ _('All Devices') } (<span id="nm-cnt">0</span>)</span>
+    <input id="nm-filter" type="text" class="nm-search" placeholder="${ _('Filter by name, IP, MAC, type…') }">
   </div>
   <table class="nm-tbl">
     <thead><tr>
       <th></th>
-      <th data-s="hostname">Name</th>
-      <th data-s="ip">IP</th>
-      <th data-s="mac">MAC</th>
-      <th data-s="vendor">Vendor</th>
-      <th data-s="device_type">Type</th>
-      <th data-s="interface">Interface</th>
-      <th data-s="signal">Signal</th>
-      <th data-s="online">Status</th>
+      <th data-s="hostname">${_('Name')}</th>
+      <th data-s="ip">${_('IP')}</th>
+      <th data-s="mac">${_('MAC')}</th>
+      <th data-s="vendor">${_('Vendor')}</th>
+      <th data-s="device_type">${_('Type')}</th>
+      <th data-s="interface">${_('Interface')}</th>
+      <th data-s="signal">${_('Signal')}</th>
+      <th data-s="online">${_('Status')}</th>
     </tr></thead>
     <tbody id="nm-tbody"></tbody>
   </table>
@@ -601,11 +614,11 @@ return view.extend({
 
 		// Status
 		const st = wrap.querySelector('#nm-st');
-		if (st) { st.className = 'nm-st-ok'; st.textContent = `${devices.length} devices`; }
+		if (st) { st.className = 'nm-st-ok'; st.textContent = `${devices.length} ${_('devices')}`; }
 
 		// Last scan
 		const ls = wrap.querySelector('#nm-ls');
-		if (ls) ls.textContent = _data.meta?.last_scan ? `Last scan: ${fmtRel(_data.meta.last_scan)}` : '';
+		if (ls) ls.textContent = _data.meta?.last_scan ? `${_('Last scan:')} ${fmtRel(_data.meta.last_scan)}` : '';
 
 		// Device count
 		const cnt = wrap.querySelector('#nm-cnt');
@@ -637,17 +650,17 @@ return view.extend({
 
 	_scan: function(mode, wrap) {
 		const st = wrap.querySelector('#nm-st');
-		if (st) { st.className = 'nm-st-scan'; st.textContent = `${mode} scan running…`; }
+		if (st) { st.className = 'nm-st-scan'; st.textContent = `${_(mode)} ${_('scan running…')}`; }
 		wrap.querySelector('#nm-quick').disabled = true;
 		wrap.querySelector('#nm-deep' ).disabled = true;
 
 		callScan(mode).then(res => {
 			if (res.status === 'busy') {
-				if (st) st.textContent = 'Scan already running…';
+				if (st) st.textContent = _('Scan already running…');
 			}
 			this._pollScan(wrap);
 		}).catch(() => {
-			if (st) { st.className = 'nm-st-idle'; st.textContent = 'Scan failed'; }
+			if (st) { st.className = 'nm-st-idle'; st.textContent = _('Scan failed'); }
 			wrap.querySelector('#nm-quick').disabled = false;
 			wrap.querySelector('#nm-deep' ).disabled = false;
 		});

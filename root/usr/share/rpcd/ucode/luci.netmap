@@ -1,0 +1,67 @@
+// /usr/share/rpcd/ucode/luci.netmap
+// ucode rpcd handler for the Network Map dashboard
+
+'use strict';
+
+import { access, open } from 'fs';
+
+const DEVICES_FILE = '/etc/netmap/devices.json';
+const SCAN_BIN     = '/usr/bin/netmap-scan';
+const LOCK_FILE    = '/tmp/netmap_scan.lock';
+
+function readDevices() {
+	const f = open(DEVICES_FILE, 'r');
+	if (!f)
+		return {
+			meta: { last_scan: null, device_count: 0, scan_mode: 'none' },
+			interfaces: [{ name: 'wired', type: 'wired', display: 'Wired (Ethernet)', ssid: '', band: '', channel: 0 }],
+			devices: []
+		};
+
+	let data;
+	try {
+		data = json(f.read('all'));
+	} catch(e) {
+		data = {};
+	}
+	f.close();
+	return data || {};
+}
+
+const methods = {
+	// Return the full device dataset
+	get_devices: {
+		call: function(req) {
+			return readDevices();
+		}
+	},
+
+	// Return lightweight status (scanning flag + counts)
+	get_status: {
+		call: function(req) {
+			const scanning = access(LOCK_FILE) ? true : false;
+			const data     = readDevices();
+			return {
+				scanning,
+				last_scan:    data?.meta?.last_scan    ?? null,
+				scan_mode:    data?.meta?.scan_mode    ?? null,
+				device_count: data?.meta?.device_count ?? 0,
+			};
+		}
+	},
+
+	// Trigger a background scan (quick or deep)
+	trigger_scan: {
+		args: { mode: 'quick' },
+		call: function(req) {
+			if (access(LOCK_FILE))
+				return { status: 'busy' };
+
+			const mode = (req.args?.mode === 'deep') ? 'deep' : 'quick';
+			system([ '/bin/sh', '-c', `${SCAN_BIN} ${mode} >/tmp/netmap_last.log 2>&1 &` ]);
+			return { status: 'started', mode };
+		}
+	}
+};
+
+return { 'luci.netmap': methods };

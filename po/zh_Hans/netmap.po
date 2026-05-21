@@ -1,0 +1,162 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Router / Gateway"
+msgstr "路由器 / 网关"
+
+msgid "Computer / Laptop"
+msgstr "电脑 / 笔记本"
+
+msgid "iPhone / Apple Device"
+msgstr "iPhone / 苹果设备"
+
+msgid "Android Phone"
+msgstr "安卓手机"
+
+msgid "Tablet"
+msgstr "平板"
+
+msgid "Smart TV"
+msgstr "智能电视"
+
+msgid "Streaming Device"
+msgstr "流媒体设备"
+
+msgid "Smart Speaker"
+msgstr "智能音箱"
+
+msgid "Printer"
+msgstr "打印机"
+
+msgid "Games Console"
+msgstr "游戏机"
+
+msgid "Powerline Adapter"
+msgstr "电力线适配器"
+
+msgid "NAS / Server"
+msgstr "NAS / 服务器"
+
+msgid "IoT / Smart Home"
+msgstr "物联网 / 智能家居"
+
+msgid "Access Point"
+msgstr "接入点"
+
+msgid "Unknown"
+msgstr "未知"
+
+msgid "just now"
+msgstr "刚刚"
+
+msgid "%dm ago"
+msgstr "%d 分钟前"
+
+msgid "%dh ago"
+msgstr "%d 小时前"
+
+msgid "%dd ago"
+msgstr "%d 天前"
+
+msgid "dBm"
+msgstr "dBm"
+
+msgid "Name"
+msgstr "名称"
+
+msgid "Type"
+msgstr "类型"
+
+msgid "IP"
+msgstr "IP"
+
+msgid "MAC"
+msgstr "MAC"
+
+msgid "Vendor"
+msgstr "厂商"
+
+msgid "Interface"
+msgstr "接口"
+
+msgid "Signal"
+msgstr "信号"
+
+msgid "TX rate"
+msgstr "发送速率"
+
+msgid "RX rate"
+msgstr "接收速率"
+
+msgid "OS guess"
+msgstr "操作系统猜测"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Online"
+msgstr "在线"
+
+msgid "Offline"
+msgstr "离线"
+
+msgid "First seen"
+msgstr "首次发现"
+
+msgid "Last seen"
+msgstr "最后发现"
+
+msgid "Loading…"
+msgstr "加载中…"
+
+msgid "Quick Scan"
+msgstr "快速扫描"
+
+msgid "Deep Scan"
+msgstr "深度扫描"
+
+msgid "Auto-refresh"
+msgstr "自动刷新"
+
+msgid "Topology"
+msgstr "拓扑图"
+
+msgid "Device"
+msgstr "设备"
+
+msgid "All Devices"
+msgstr "所有设备"
+
+msgid "Filter by name, IP, MAC, type…"
+msgstr "按名称、IP、MAC、类型筛选…"
+
+msgid "devices"
+msgstr "个设备"
+
+msgid "Last scan:"
+msgstr "上次扫描："
+
+msgid "quick"
+msgstr "快速"
+
+msgid "deep"
+msgstr "深度"
+
+msgid "scan running…"
+msgstr "扫描进行中…"
+
+msgid "Scan already running…"
+msgstr "扫描已在进行中…"
+
+msgid "Scan failed"
+msgstr "扫描失败"
+
+msgid "Network Map"
+msgstr "网络拓扑图"

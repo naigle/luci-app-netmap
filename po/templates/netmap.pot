@@ -1,0 +1,161 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Router / Gateway"
+msgstr ""
+
+msgid "Computer / Laptop"
+msgstr ""
+
+msgid "iPhone / Apple Device"
+msgstr ""
+
+msgid "Android Phone"
+msgstr ""
+
+msgid "Tablet"
+msgstr ""
+
+msgid "Smart TV"
+msgstr ""
+
+msgid "Streaming Device"
+msgstr ""
+
+msgid "Smart Speaker"
+msgstr ""
+
+msgid "Printer"
+msgstr ""
+
+msgid "Games Console"
+msgstr ""
+
+msgid "Powerline Adapter"
+msgstr ""
+
+msgid "NAS / Server"
+msgstr ""
+
+msgid "IoT / Smart Home"
+msgstr ""
+
+msgid "Access Point"
+msgstr ""
+
+msgid "Unknown"
+msgstr ""
+
+msgid "just now"
+msgstr ""
+
+msgid "%dm ago"
+msgstr ""
+
+msgid "%dh ago"
+msgstr ""
+
+msgid "%dd ago"
+msgstr ""
+
+msgid "dBm"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "IP"
+msgstr ""
+
+msgid "MAC"
+msgstr ""
+
+msgid "Vendor"
+msgstr ""
+
+msgid "Interface"
+msgstr ""
+
+msgid "Signal"
+msgstr ""
+
+msgid "TX rate"
+msgstr ""
+
+msgid "RX rate"
+msgstr ""
+
+msgid "OS guess"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Online"
+msgstr ""
+
+msgid "Offline"
+msgstr ""
+
+msgid "First seen"
+msgstr ""
+
+msgid "Last seen"
+msgstr ""
+
+msgid "Loading…"
+msgstr ""
+
+msgid "Quick Scan"
+msgstr ""
+
+msgid "Deep Scan"
+msgstr ""
+
+msgid "Auto-refresh"
+msgstr ""
+
+msgid "Topology"
+msgstr ""
+
+msgid "Device"
+msgstr ""
+
+msgid "All Devices"
+msgstr ""
+
+msgid "Filter by name, IP, MAC, type…"
+msgstr ""
+
+msgid "devices"
+msgstr ""
+
+msgid "Last scan:"
+msgstr ""
+
+msgid "quick"
+msgstr ""
+
+msgid "deep"
+msgstr ""
+
+msgid "scan running…"
+msgstr ""
+
+msgid "Scan already running…"
+msgstr ""
+
+msgid "Scan failed"
+msgstr ""
+
+msgid "Network Map"
+msgstr ""

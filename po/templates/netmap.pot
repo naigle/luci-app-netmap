@@ -157,5 +157,20 @@ msgstr ""
 msgid "Scan failed"
 msgstr ""
 
+msgid "Wired (Ethernet)"
+msgstr ""
+
+msgid "Wired"
+msgstr ""
+
+msgid "WiFi"
+msgstr ""
+
+msgid "LAN"
+msgstr ""
+
+msgid "WAN"
+msgstr ""
+
 msgid "Network Map"
 msgstr ""

@@ -158,5 +158,20 @@ msgstr "扫描已在进行中…"
 msgid "Scan failed"
 msgstr "扫描失败"
 
+msgid "Wired (Ethernet)"
+msgstr "有线 (以太网)"
+
+msgid "Wired"
+msgstr "有线"
+
+msgid "WiFi"
+msgstr "WiFi"
+
+msgid "LAN"
+msgstr "局域网"
+
+msgid "WAN"
+msgstr "广域网"
+
 msgid "Network Map"
 msgstr "网络拓扑图"

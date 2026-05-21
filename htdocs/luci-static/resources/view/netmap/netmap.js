@@ -130,6 +130,15 @@ const TYPE_LABEL = {
 	iot: _('IoT / Smart Home'), ap: _('Access Point'), unknown: _('Unknown'),
 };
 
+// Interface display name translations
+const IFACE_LABEL = {
+	'Wired (Ethernet)': _('Wired (Ethernet)'),
+	'wired': _('Wired'),
+	'wifi': _('WiFi'),
+	'lan': _('LAN'),
+	'wan': _('WAN'),
+};
+
 // ============================================================
 // CSS  (injected once into <head>)
 // ============================================================
@@ -181,7 +190,7 @@ const CSS = `
 .nm-node:hover .nm-node-bg{opacity:.15}
 .nm-node-bg{fill:currentColor;opacity:0;transition:opacity .15s}
 .nm-lbl{font-size:11px;fill:var(--text-color,#333);text-anchor:middle;pointer-events:none;font-family:sans-serif}
-.nm-lbl-ip{font-size:9px;fill:var(--muted-color,#999);text-anchor:middle;pointer-events:none;font-family:sans-serif}
+.nm-lbl-ip{font-size:8px;fill:var(--muted-color,#888);text-anchor:middle;pointer-events:none;font-family:sans-serif}
 .nm-grp-lbl{font-size:11px;fill:var(--muted-color,#666);text-anchor:middle;font-family:sans-serif;font-weight:600}
 .nm-edge{stroke:var(--border-color,#ccc);stroke-width:1.5;fill:none}
 .nm-edge-w{stroke:#90caf9;stroke-dasharray:4 3}
@@ -259,9 +268,9 @@ function renderTopology(svg, data, onSelect) {
 	// Only include interfaces that have devices (plus wired always)
 	const groups = ifaces.filter(i => i.name === 'wired' || (byIface[i.name] || []).length > 0);
 
-	const NODE_R  = 26, NODE_W = 68, NODE_H = 82;
-	const GRP_PAD = 20, COL_PAD = 40;
-	const TOP_Y   = 65, GRP_Y  = 170, DEV_COLS = 3;
+	const NODE_R  = 26, NODE_W = 72, NODE_H = 95;
+	const GRP_PAD = 22, COL_PAD = 45;
+	const TOP_Y   = 65, GRP_Y  = 170, DEV_COLS = 2;
 
 	let totalW = COL_PAD;
 	const gPos = groups.map(iface => {
@@ -324,8 +333,8 @@ function renderTopology(svg, data, onSelect) {
 			fill: isWi ? '#e3f2fd' : '#f5f5f5',
 			stroke: isWi ? '#90caf9' : '#bdbdbd', 'stroke-width': '1'
 		}));
-		hG.appendChild(svgEl('text', { x: cx, y: GRP_Y-7, class: 'nm-grp-lbl' },
-			iface.display || iface.name));
+		const displayName = IFACE_LABEL[iface.display] || IFACE_LABEL[iface.name] || iface.display || iface.name;
+		hG.appendChild(svgEl('text', { x: cx, y: GRP_Y-7, class: 'nm-grp-lbl' }, displayName));
 		if (iface.ssid)
 			hG.appendChild(svgEl('text', { x: cx, y: GRP_Y+8, class: 'nm-lbl-ip' },
 				`"${iface.ssid}"`));
@@ -373,10 +382,10 @@ function renderTopology(svg, data, onSelect) {
 					stroke: '#ef9a9a', 'stroke-width': '2', 'stroke-linecap': 'round'
 				}));
 
-			dG.appendChild(svgEl('text', { x: dx, y: dy+NODE_R+13, class: 'nm-lbl' },
+			dG.appendChild(svgEl('text', { x: dx, y: dy+NODE_R+14, class: 'nm-lbl' },
 				label.length > 10 ? label.slice(0,9)+'…' : label));
 			if (dev.ip)
-				dG.appendChild(svgEl('text', { x: dx, y: dy+NODE_R+24, class: 'nm-lbl-ip' }, dev.ip));
+				dG.appendChild(svgEl('text', { x: dx, y: dy+NODE_R+28, class: 'nm-lbl-ip' }, dev.ip));
 
 			dG.addEventListener('click', () => onSelect(dev));
 			svg.appendChild(dG);

@@ -16,6 +16,17 @@ include $(TOPDIR)/feeds/luci/luci.mk
 
 # Additional files installation (non-standard paths)
 define Package/luci-app-netmap/install
+	# LuCI standard paths (manual since we override default install)
+	$(INSTALL_DIR) $(1)/www/luci-static/resources/view/netmap
+	$(CP) ./htdocs/luci-static/resources/view/netmap/* $(1)/www/luci-static/resources/view/netmap/
+
+	$(INSTALL_DIR) $(1)/usr/share/luci/menu.d
+	$(INSTALL_DATA) ./root/usr/share/luci/menu.d/* $(1)/usr/share/luci/menu.d/
+
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
+	$(INSTALL_DATA) ./root/usr/share/rpcd/acl.d/* $(1)/usr/share/rpcd/acl.d/
+
+	# NetMap specific files
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./files/netmap.scan $(1)/usr/bin/netmap-scan
 

@@ -268,9 +268,9 @@ function renderTopology(svg, data, onSelect) {
 	// Only include interfaces that have devices (plus wired always)
 	const groups = ifaces.filter(i => i.name === 'wired' || (byIface[i.name] || []).length > 0);
 
-	const NODE_R  = 26, NODE_W = 72, NODE_H = 95;
-	const GRP_PAD = 22, COL_PAD = 45;
-	const TOP_Y   = 65, GRP_Y  = 170, DEV_COLS = 2;
+	const NODE_R  = 26, NODE_W = 75, NODE_H = 95;
+	const GRP_PAD = 24, COL_PAD = 50;
+	const TOP_Y   = 65, GRP_Y  = 170, DEV_COLS = 3;
 
 	let totalW = COL_PAD;
 	const gPos = groups.map(iface => {

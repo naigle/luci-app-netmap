@@ -2,7 +2,6 @@
 'require view';
 'require poll';
 'require rpc';
-'require base';
 
 // ============================================================
 // RPC declarations

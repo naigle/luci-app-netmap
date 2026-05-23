@@ -158,7 +158,22 @@ if [ "$SCAN_MODE" = "deep" ]; then
 fi
 
 # ============================================================
-# STEP 6 – Preserve history from existing data
+# STEP 6 – Ping latency (parallel, one ping per host)
+# ============================================================
+log "[$SCAN_MODE] Step 6: ping latency"
+> "$TMP_DIR/latency.txt"
+while IFS='	' read -r ip _mac; do
+    (
+        ms=$(ping -c 1 -W 1 "$ip" 2>/dev/null \
+            | awk -F'/' '/rtt|round-trip/{printf "%d", $5}')
+        [ -n "$ms" ] && printf '%s\t%s\n' "$ip" "$ms" >> "$TMP_DIR/latency.txt"
+    ) &
+done < "$TMP_DIR/arp.txt"
+wait
+log "  Latency: $(wc -l < "$TMP_DIR/latency.txt") hosts"
+
+# ============================================================
+# STEP 7 – Preserve history from existing data
 # ============================================================
 > "$TMP_DIR/existing.txt"
 if [ -f "$DEVICES_FILE" ]; then
@@ -178,9 +193,9 @@ if (f) {
 fi
 
 # ============================================================
-# STEP 7 – Assemble JSON via ucode
+# STEP 8 – Assemble JSON via ucode
 # ============================================================
-log "[$SCAN_MODE] Step 6: assembling JSON"
+log "[$SCAN_MODE] Step 8: assembling JSON"
 
 ucode "$ASSEMBLE" \
     "$TMP_DIR/arp.txt" \
@@ -195,7 +210,8 @@ ucode "$ASSEMBLE" \
     "$SCAN_MODE" \
     "$NOW" \
     "$DEVICES_FILE" \
-    "$ROUTER_MACS"
+    "$ROUTER_MACS" \
+    "$TMP_DIR/latency.txt"
 
 log "[$SCAN_MODE] Scan complete"
 exit 0

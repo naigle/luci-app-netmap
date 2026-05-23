@@ -2,7 +2,7 @@
 // /usr/share/netmap/assemble.uc
 // Merges scan TSV data into /etc/netmap/devices.json
 // Args: arp dhcp stations ifaces nmap_os existing oui_db
-//       scan_net local_ip scan_mode now out_file router_macs_str
+//       scan_net local_ip scan_mode now out_file router_macs_str latency
 
 'use strict';
 
@@ -22,6 +22,7 @@ let scan_mode  = ARGV[ai++];
 let now        = ARGV[ai++];
 let out_f      = ARGV[ai++];
 let router_macs_str = ARGV[ai++] ?? '';
+let latency_f       = ARGV[ai++] ?? '';
 
 // Router MACs to exclude (keyed object for O(1) lookup)
 let routerMacs = {};
@@ -111,12 +112,13 @@ function classify(hostname, ouiType, osGuess) {
 }
 
 // ---- Load all data files ----
-let arpRows   = readTSV(arp_f);
-let dhcpRows  = readTSV(dhcp_f);
-let staRows   = readTSV(sta_f);
-let ifaceRows = readTSV(iface_f);
-let nmapRows  = readTSV(nmap_f);
-let existRows = readTSV(exist_f);
+let arpRows     = readTSV(arp_f);
+let dhcpRows    = readTSV(dhcp_f);
+let staRows     = readTSV(sta_f);
+let ifaceRows   = readTSV(iface_f);
+let nmapRows    = readTSV(nmap_f);
+let existRows   = readTSV(exist_f);
+let latencyRows = readTSV(latency_f);
 
 // ---- Build lookup maps ----
 let macToIP  = {};
@@ -153,6 +155,10 @@ for (let _i, row in nmapRows)
 let existing = {};
 for (let _i, row in existRows)
     if (row[0]) existing[lc(row[0])] = { first_seen: row[1] ?? '', custom_name: row[2] ?? '' };
+
+let latencyMS = {};
+for (let _i, row in latencyRows)
+    if (row[0] && length(row[1])) latencyMS[row[0]] = +row[1];
 
 // ---- Collect unique MACs ----
 let allMacs = {};
@@ -193,6 +199,7 @@ for (let mac in allMacs) {
         signal:       sta ? sta.signal   : null,
         tx_rate:      sta ? sta.tx_rate  : null,
         rx_rate:      sta ? sta.rx_rate  : null,
+        latency_ms:   latencyMS[ip] ?? null,
         os_guess:     osGuess,
         online:       true,
         first_seen:   firstSeen,

@@ -195,6 +195,7 @@ const CSS = `
 .nm-sig{display:inline-flex;gap:2px;align-items:flex-end;height:14px;vertical-align:middle}
 .nm-sig-b{width:4px;background:#ccc;border-radius:1px}
 .nm-sig-b.a{background:#4caf50}.nm-sig-b.m{background:#ff9800}.nm-sig-b.w{background:#f44336}
+.nm-lat-good{color:#2e7d32;font-weight:600}.nm-lat-ok{color:#f57c00;font-weight:600}.nm-lat-warn{color:#e65100;font-weight:600}.nm-lat-bad{color:#c62828;font-weight:600}
 .nm-node{cursor:grab}
 .nm-node:active{cursor:grabbing}
 .nm-node-bg{opacity:0;transition:opacity .18s}
@@ -242,6 +243,12 @@ function sigBars(dbm) {
 		`<span class="nm-sig-b${l.min <= dbm ? ' '+cls : ''}" style="height:${l.h}px"></span>`
 	).join('');
 	return `<span class="nm-sig" title="${dbm} dBm">${bars}</span> ${dbm} dBm`;
+}
+
+function latencyBadge(ms) {
+	if (ms == null) return '—';
+	const cls = ms < 5 ? 'nm-lat-good' : ms < 20 ? 'nm-lat-ok' : ms < 50 ? 'nm-lat-warn' : 'nm-lat-bad';
+	return `<span class="${cls}">${ms} ms</span>`;
 }
 
 function iconSVG(type, size, color) {
@@ -638,10 +645,11 @@ function renderDetail(container, dev) {
 		`<dt>MAC</dt><dd>${esc(dev.mac)}</dd>` +
 		`<dt>Vendor</dt><dd>${esc(dev.vendor || '—')}</dd>` +
 		`<dt>Interface</dt><dd>${esc(dev.interface || '—')}</dd>` +
-		(dev.signal  != null ? `<dt>Signal</dt><dd>${sigBars(dev.signal)}</dd>` : '') +
-		(dev.tx_rate         ? `<dt>TX rate</dt><dd>${dev.tx_rate} Mbps</dd>`   : '') +
-		(dev.rx_rate         ? `<dt>RX rate</dt><dd>${dev.rx_rate} Mbps</dd>`   : '') +
-		(dev.os_guess        ? `<dt>OS guess</dt><dd>${esc(dev.os_guess)}</dd>` : '') +
+		(dev.signal    != null ? `<dt>Signal</dt><dd>${sigBars(dev.signal)}</dd>` : '') +
+		(dev.tx_rate          ? `<dt>TX rate</dt><dd>${dev.tx_rate} Mbps</dd>`   : '') +
+		(dev.rx_rate          ? `<dt>RX rate</dt><dd>${dev.rx_rate} Mbps</dd>`   : '') +
+		`<dt>Latency</dt><dd>${latencyBadge(dev.latency_ms)}</dd>` +
+		(dev.os_guess         ? `<dt>OS guess</dt><dd>${esc(dev.os_guess)}</dd>` : '') +
 		`<dt>Status</dt><dd class="${dev.online?'nm-online':'nm-offline'}">${dev.online?'● Online':'○ Offline'}</dd>` +
 		`<dt>First seen</dt><dd>${esc(fmtDate(dev.first_seen))}</dd>` +
 		`<dt>Last seen</dt><dd>${esc(fmtDate(dev.last_seen))}</dd>` +

@@ -202,9 +202,14 @@ const CSS = `
 .nm-sig-b{width:4px;background:#ccc;border-radius:1px}
 .nm-sig-b.a{background:#4caf50}.nm-sig-b.m{background:#ff9800}.nm-sig-b.w{background:#f44336}
 .nm-lat-good{color:#2e7d32;font-weight:600}.nm-lat-ok{color:#f57c00;font-weight:600}.nm-lat-warn{color:#e65100;font-weight:600}.nm-lat-bad{color:#c62828;font-weight:600}
-.nm-name-edit{margin-top:.75rem;display:flex;gap:.4rem}
-.nm-name-inp{flex:1;padding:.3rem .5rem;border:1px solid var(--border-color,#ccc);border-radius:3px;font-size:.82rem;background:var(--input-bg,#fff);color:var(--text-color,#333)}
-.nm-name-msg{font-size:.75rem;margin-top:.3rem;min-height:1em}
+.nm-dt-title{cursor:pointer;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nm-dt-title:hover{text-decoration:underline dotted}
+.nm-btn-edit{background:transparent;border:none;cursor:pointer;font-size:.9rem;color:var(--muted-color,#aaa);padding:0 .2rem;line-height:1;flex-shrink:0}
+.nm-btn-edit:hover{color:var(--text-color,#ddd)}
+.nm-name-row{display:none;align-items:center;gap:.3rem;flex:1;min-width:0}
+.nm-name-row.active{display:flex}
+.nm-name-inp{flex:1;min-width:0;padding:.2rem .4rem;border:1px solid #4a90d9;border-radius:3px;font-size:.82rem;background:#1a2f45;color:#d0e8f8;outline:none}
+.nm-name-msg{font-size:.72rem;padding:.15rem .75rem;color:#f57c00;min-height:1em}
 .nm-node{cursor:grab}
 .nm-node:active{cursor:grabbing}
 .nm-node-bg{opacity:0;transition:opacity .18s}
@@ -761,15 +766,17 @@ return view.extend({
   </div>
   <div id="nm-detail" class="nm-detail nm-hidden">
     <div class="nm-detail-hdr">
-      <span id="nm-dt-title">Device</span>
+      <span id="nm-dt-title" class="nm-dt-title" title="Click to rename">Device</span>
+      <button id="nm-dt-edit" class="nm-btn-edit" title="Rename device">&#9998;</button>
+      <span id="nm-name-row" class="nm-name-row">
+        <input id="nm-name-inp" class="nm-name-inp" type="text" placeholder="Custom name…">
+        <button id="nm-name-save" class="nm-btn nm-btn-p nm-btn-x" title="Save">&#10003;</button>
+        <button id="nm-name-cancel" class="nm-btn-x" title="Cancel">&#10005;</button>
+      </span>
       <button id="nm-dt-close" class="nm-btn-x">&#10005;</button>
     </div>
-    <div id="nm-dt-body" class="nm-detail-body"></div>
-    <div class="nm-name-edit">
-      <input id="nm-name-inp" class="nm-name-inp" type="text" placeholder="Custom name…">
-      <button id="nm-name-save" class="nm-btn nm-btn-p">Save</button>
-    </div>
     <div id="nm-name-msg" class="nm-name-msg"></div>
+    <div id="nm-dt-body" class="nm-detail-body"></div>
   </div>
 </div>
 <div class="nm-tbl-panel">
@@ -814,29 +821,45 @@ return view.extend({
 			wrap.querySelector('.nm-sel-ring')?.remove();
 		});
 
+		const startEdit = () => {
+			const inp = $('nm-name-inp');
+			if (inp && _selected) inp.value = _selected.custom_name || '';
+			$('nm-dt-title').style.display  = 'none';
+			$('nm-dt-edit').style.display   = 'none';
+			$('nm-name-row').classList.add('active');
+			$('nm-name-msg').textContent = '';
+			if (inp) { inp.focus(); inp.select(); }
+		};
+		const endEdit = () => {
+			$('nm-dt-title').style.display  = '';
+			$('nm-dt-edit').style.display   = '';
+			$('nm-name-row').classList.remove('active');
+		};
+
+		$('nm-dt-title').addEventListener('click', startEdit);
+		$('nm-dt-edit' ).addEventListener('click', startEdit);
+		$('nm-name-cancel').addEventListener('click', endEdit);
+
+		$('nm-name-inp').addEventListener('keydown', e => {
+			if (e.key === 'Enter')  $('nm-name-save').click();
+			if (e.key === 'Escape') endEdit();
+		});
+
 		$('nm-name-save').addEventListener('click', () => {
 			if (!_selected) return;
-			const inp  = $('nm-name-inp');
-			const msg  = $('nm-name-msg');
-			const btn  = $('nm-name-save');
-			const name = inp ? inp.value.trim() : '';
-			if (btn) btn.disabled = true;
-			if (msg) msg.textContent = 'Saving…';
+			const name = $('nm-name-inp').value.trim();
+			$('nm-name-save').disabled = true;
 			callSetName(_selected.mac, name).then(res => {
+				$('nm-name-save').disabled = false;
 				if (res && res.error) {
-					if (msg) msg.textContent = 'Error: ' + res.error;
-					if (btn) btn.disabled = false;
+					$('nm-name-msg').textContent = 'Error: ' + res.error;
 				} else {
-					if (msg) msg.textContent = name ? 'Saved.' : 'Name cleared.';
-					if (btn) btn.disabled = false;
-					return callGetDevices().then(d => {
-						_data = d;
-						this._update(wrap);
-					});
+					endEdit();
+					return callGetDevices().then(d => { _data = d; this._update(wrap); });
 				}
 			}).catch(() => {
-				if (msg) msg.textContent = 'Save failed.';
-				if (btn) btn.disabled = false;
+				$('nm-name-save').disabled = false;
+				$('nm-name-msg').textContent = 'Save failed.';
 			});
 		});
 		$('nm-filter').addEventListener('input', e => {
@@ -877,11 +900,11 @@ return view.extend({
 			catch(err) { body.textContent = 'Error: ' + err; }
 		}
 
-		// Populate the static name editor (wired once in render)
-		const inp = wrap.querySelector('#nm-name-inp');
-		const msg = wrap.querySelector('#nm-name-msg');
-		if (inp) inp.value = dev.custom_name || '';
-		if (msg) msg.textContent = '';
+		// Reset inline name editor on device change
+		wrap.querySelector('#nm-dt-title').style.display = '';
+		wrap.querySelector('#nm-dt-edit').style.display  = '';
+		wrap.querySelector('#nm-name-row').classList.remove('active');
+		wrap.querySelector('#nm-name-msg').textContent   = '';
 
 		// Selection ring on SVG node
 		var rings = wrap.querySelectorAll('.nm-sel-ring');

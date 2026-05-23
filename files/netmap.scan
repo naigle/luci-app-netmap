@@ -133,7 +133,7 @@ flush_arp() {
 }
 
 flush_arp
-nmap -sn -T4 --host-timeout 3s "$SCAN_NET" >/dev/null 2>&1
+nmap -sn -T4 --host-timeout 3s --exclude "$LOCAL_IP" "$SCAN_NET" >/dev/null 2>&1
 flush_arp
 sort -u -o "$TMP_DIR/arp.txt" "$TMP_DIR/arp.txt"
 log "  ARP: $(wc -l < "$TMP_DIR/arp.txt") entries"
@@ -145,7 +145,7 @@ log "  ARP: $(wc -l < "$TMP_DIR/arp.txt") entries"
 if [ "$SCAN_MODE" = "deep" ]; then
     log "[$SCAN_MODE] Step 5: nmap OS fingerprinting"
     nmap -O --osscan-guess -sV --version-light -T4 \
-        --host-timeout 30s "$SCAN_NET" \
+        --host-timeout 30s --exclude "$LOCAL_IP" "$SCAN_NET" \
         -oG "$TMP_DIR/nmap_deep.gnmap" >/dev/null 2>&1
 
     # Extract: IP <TAB> OS string

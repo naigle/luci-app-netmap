@@ -428,6 +428,7 @@ function renderTopology(svg, data, positions, onSelect) {
 	});
 
 	const maxRows = Math.max(1, ...groups.map(i => Math.ceil((byIface[i.name] || []).length / DEV_COLS)));
+	const grpH    = 38 + 50 + maxRows * NODE_H + 16;   // uniform height for all cards
 	const svgH    = GRP_Y + 60 + maxRows * NODE_H + 36;
 	const routerX = svgW / 2;
 
@@ -481,10 +482,8 @@ function renderTopology(svg, data, positions, onSelect) {
 	const groupBounds = {};   // mac → { x1, y1, x2, y2 } in SVG coords
 
 	gPos.forEach(({ iface, devs, x, w }) => {
-		const cx      = x + w / 2;
-		const isWifi  = iface.type === 'wifi';
-		const devRows = Math.ceil(devs.length / DEV_COLS) || 1;
-		const grpH    = 38 + 50 + devRows * NODE_H + 16;
+		const cx     = x + w / 2;
+		const isWifi = iface.type === 'wifi';
 
 		// Drag bounds for devices in this group (node centre must stay inside)
 		const bx1 = x + GRP_PAD;

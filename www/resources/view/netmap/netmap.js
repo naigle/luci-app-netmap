@@ -260,6 +260,13 @@ function sigBars(dbm) {
 	return `<span class="nm-sig" title="${dbm} dBm">${bars}</span> ${dbm} dBm`;
 }
 
+function fmtInactive(ms) {
+	if (ms == null) return null;
+	if (ms < 1000)  return ms + ' ms';
+	if (ms < 60000) return (ms / 1000).toFixed(1) + ' s';
+	return Math.floor(ms / 60000) + ' m ' + Math.floor((ms % 60000) / 1000) + ' s';
+}
+
 function latencyBadge(ms) {
 	if (ms == null) return '—';
 	const cls = ms < 5 ? 'nm-lat-good' : ms < 20 ? 'nm-lat-ok' : ms < 50 ? 'nm-lat-warn' : 'nm-lat-bad';
@@ -662,6 +669,9 @@ function renderDetail(container, dev) {
 		(dev.signal    != null ? `<dt>Signal</dt><dd>${sigBars(dev.signal)}</dd>` : '') +
 		(dev.tx_rate          ? `<dt>TX rate</dt><dd>${dev.tx_rate} Mbps</dd>`   : '') +
 		(dev.rx_rate          ? `<dt>RX rate</dt><dd>${dev.rx_rate} Mbps</dd>`   : '') +
+		(dev.tx_failed  != null ? `<dt>TX failed</dt><dd>${dev.tx_failed}</dd>`  : '') +
+		(dev.tx_retries != null ? `<dt>TX retries</dt><dd>${dev.tx_retries}</dd>`: '') +
+		(fmtInactive(dev.inactive_ms) ? `<dt>Inactive</dt><dd>${fmtInactive(dev.inactive_ms)}</dd>` : '') +
 		`<dt>Latency</dt><dd>${latencyBadge(dev.latency_ms)}</dd>` +
 		(dev.os_guess         ? `<dt>OS guess</dt><dd>${esc(dev.os_guess)}</dd>` : '') +
 		`<dt>Status</dt><dd class="${dev.online?'nm-online':'nm-offline'}">${dev.online?'● Online':'○ Offline'}</dd>` +

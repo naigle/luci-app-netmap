@@ -140,10 +140,13 @@ let stations = {};
 for (let _i, row in staRows) {
     if (row[0]) {
         stations[lc(row[0])] = {
-            iface:   row[1] ?? 'wired',
-            signal:  length(row[2]) ? +row[2] : null,
-            tx_rate: length(row[3]) ? +row[3] : null,
-            rx_rate: length(row[4]) ? +row[4] : null,
+            iface:       row[1] ?? 'wired',
+            signal:      length(row[2]) ? +row[2] : null,
+            tx_rate:     length(row[3]) ? +row[3] : null,
+            rx_rate:     length(row[4]) ? +row[4] : null,
+            tx_failed:   length(row[5]) ? +row[5] : null,
+            tx_retries:  length(row[6]) ? +row[6] : null,
+            inactive_ms: length(row[7]) ? +row[7] : null,
         };
     }
 }
@@ -197,10 +200,13 @@ for (let mac in allMacs) {
         custom_type:  customType,
         vendor,
         device_type:  deviceType,
-        interface:    sta ? sta.iface    : 'wired',
-        signal:       sta ? sta.signal   : null,
-        tx_rate:      sta ? sta.tx_rate  : null,
-        rx_rate:      sta ? sta.rx_rate  : null,
+        interface:    sta ? sta.iface       : 'wired',
+        signal:       sta ? sta.signal     : null,
+        tx_rate:      sta ? sta.tx_rate    : null,
+        rx_rate:      sta ? sta.rx_rate    : null,
+        tx_failed:    sta ? sta.tx_failed  : null,
+        tx_retries:   sta ? sta.tx_retries : null,
+        inactive_ms:  sta ? sta.inactive_ms: null,
         latency_ms:   latencyMS[ip] ?? null,
         os_guess:     osGuess,
         online:       true,

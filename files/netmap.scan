@@ -66,18 +66,19 @@ for iface in $(iw dev 2>/dev/null | awk '/Interface/{print $2}'); do
     log "  $iface  SSID='$ssid'  $band  ch$chan"
 
     # Parse station dump block-by-block
-    cur_mac="" cur_sig="" cur_tx="" cur_rx=""
+    cur_mac="" cur_sig="" cur_tx="" cur_rx="" cur_fail="" cur_retry="" cur_inactive=""
     while IFS= read -r line; do
         case "$line" in
             Station*)
                 if [ -n "$cur_mac" ]; then
-                    printf '%s\t%s\t%s\t%s\t%s\n' \
+                    printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
                         "$(printf '%s' "$cur_mac" | tr '[:upper:]' '[:lower:]')" \
                         "$iface" "$cur_sig" "$cur_tx" "$cur_rx" \
+                        "$cur_fail" "$cur_retry" "$cur_inactive" \
                         >> "$TMP_DIR/wifi_stations.txt"
                 fi
                 cur_mac=$(printf '%s' "$line" | awk '{print $2}')
-                cur_sig="" cur_tx="" cur_rx=""
+                cur_sig="" cur_tx="" cur_rx="" cur_fail="" cur_retry="" cur_inactive=""
                 ;;
             *signal:*)
                 cur_sig=$(printf '%s' "$line" | grep -oE '[-0-9]+' | head -1) ;;
@@ -85,15 +86,22 @@ for iface in $(iw dev 2>/dev/null | awk '/Interface/{print $2}'); do
                 cur_tx=$(printf '%s' "$line" | grep -oE '[0-9]+\.[0-9]+' | head -1) ;;
             *rx\ bitrate:*)
                 cur_rx=$(printf '%s' "$line" | grep -oE '[0-9]+\.[0-9]+' | head -1) ;;
+            *tx\ failed:*)
+                cur_fail=$(printf '%s' "$line" | grep -oE '[0-9]+' | head -1) ;;
+            *tx\ retries:*)
+                cur_retry=$(printf '%s' "$line" | grep -oE '[0-9]+' | head -1) ;;
+            *inactive\ time:*)
+                cur_inactive=$(printf '%s' "$line" | grep -oE '[0-9]+' | head -1) ;;
         esac
     done << STATIONEOF
 $(iw dev "$iface" station dump 2>/dev/null)
 STATIONEOF
 
     if [ -n "$cur_mac" ]; then
-        printf '%s\t%s\t%s\t%s\t%s\n' \
+        printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
             "$(printf '%s' "$cur_mac" | tr '[:upper:]' '[:lower:]')" \
             "$iface" "$cur_sig" "$cur_tx" "$cur_rx" \
+            "$cur_fail" "$cur_retry" "$cur_inactive" \
             >> "$TMP_DIR/wifi_stations.txt"
     fi
 done

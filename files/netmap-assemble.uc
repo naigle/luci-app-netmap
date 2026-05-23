@@ -167,8 +167,9 @@ for (let mac in allMacs) {
     if (!mac || mac === 'ff:ff:ff:ff:ff:ff') continue;
     let macClean = uc(replace(mac, ':', ''));
     if (routerMacs[macClean]) continue;
-
     let ip       = macToIP[mac] ?? (dhcpInfo[mac] ? dhcpInfo[mac].ip : '');
+    if (ip === local_ip) continue;
+
     let hostname = dhcpInfo[mac] ? dhcpInfo[mac].hostname : '';
     let sta      = stations[mac];
     let osGuess  = nmapOS[ip] ?? '';

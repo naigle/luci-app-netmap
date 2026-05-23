@@ -124,8 +124,8 @@ log "[$SCAN_MODE] Step 4: ARP sweep"
 flush_arp() {
     # ip neigh format: IP dev IFACE lladdr MAC STATE
     # awk filters to entries with a resolved MAC (lladdr present)
-    ip neigh show 2>/dev/null | awk '
-        / lladdr / && $1 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ &&
+    ip neigh show 2>/dev/null | awk -v router="$LOCAL_IP" '
+        / lladdr / && $1 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ && $1 != router &&
         ($NF == "REACHABLE" || $NF == "STALE" || $NF == "DELAY" || $NF == "PROBE" || $NF == "PERMANENT" || $NF == "NOARP") {
             print $1 "\t" tolower($5)
         }

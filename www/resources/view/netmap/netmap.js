@@ -24,7 +24,7 @@ const callScan = rpc.declare({
 });
 
 // ============================================================
-// Icons  (24×24 SVG path content, fill="none" stroke="currentColor")
+// Icons  (24×24 SVG path content, stroke="currentColor")
 // ============================================================
 const ICONS = {
 	router:
@@ -41,7 +41,7 @@ const ICONS = {
 	phone_apple:
 		'<rect x="7" y="2" width="10" height="20" rx="3" stroke-width="1.6"/>' +
 		'<path d="M10 5h4" stroke-width="1.4" stroke-linecap="round"/>' +
-		'<circle cx="12" cy="19" r="1" fill="currentColor"/>',
+		'<circle cx="12" cy="19" r="1" fill="white" stroke="none"/>',
 
 	phone_android:
 		'<rect x="7" y="2" width="10" height="20" rx="2" stroke-width="1.6"/>' +
@@ -50,7 +50,7 @@ const ICONS = {
 
 	tablet:
 		'<rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.6"/>' +
-		'<circle cx="12" cy="19" r="1" fill="currentColor"/>',
+		'<circle cx="12" cy="19" r="1" fill="white" stroke="none"/>',
 
 	tv:
 		'<rect x="2" y="4" width="20" height="14" rx="2" stroke-width="1.6"/>' +
@@ -78,71 +78,90 @@ const ICONS = {
 		'<path d="M6 9a6 6 0 0112 0v4a6 6 0 01-12 0V9z" stroke-width="1.6"/>' +
 		'<line x1="10" y1="11" x2="10" y2="15" stroke-width="1.6" stroke-linecap="round"/>' +
 		'<line x1="8" y1="13" x2="12" y2="13" stroke-width="1.6" stroke-linecap="round"/>' +
-		'<circle cx="15" cy="11" r="0.8" fill="currentColor"/>' +
-		'<circle cx="17" cy="13" r="0.8" fill="currentColor"/>',
+		'<circle cx="15" cy="11" r="0.8" fill="white" stroke="none"/>' +
+		'<circle cx="17" cy="13" r="0.8" fill="white" stroke="none"/>',
 
 	powerline:
 		'<path d="M12 2v7l-3 3h6l-3-3" stroke-width="1.6" stroke-linejoin="round"/>' +
 		'<rect x="7" y="12" width="10" height="8" rx="2" stroke-width="1.6"/>' +
-		'<circle cx="10" cy="16" r="1.2" fill="currentColor"/>' +
-		'<circle cx="14" cy="16" r="1.2" fill="currentColor"/>',
+		'<circle cx="10" cy="16" r="1.2" fill="white" stroke="none"/>' +
+		'<circle cx="14" cy="16" r="1.2" fill="white" stroke="none"/>',
 
 	nas:
 		'<rect x="3" y="4" width="18" height="5" rx="1.5" stroke-width="1.6"/>' +
 		'<rect x="3" y="11" width="18" height="5" rx="1.5" stroke-width="1.6"/>' +
-		'<circle cx="18" cy="6.5" r="1" fill="currentColor"/>' +
-		'<circle cx="18" cy="13.5" r="1" fill="currentColor"/>' +
+		'<circle cx="18" cy="6.5" r="1" fill="white" stroke="none"/>' +
+		'<circle cx="18" cy="13.5" r="1" fill="white" stroke="none"/>' +
 		'<line x1="6" y1="6.5" x2="14" y2="6.5" stroke-width="1.2" stroke-linecap="round"/>' +
 		'<line x1="6" y1="13.5" x2="14" y2="13.5" stroke-width="1.2" stroke-linecap="round"/>',
 
 	iot:
 		'<path d="M5 12.5a7 7 0 0114 0" stroke-width="1.6" stroke-linecap="round"/>' +
 		'<path d="M8 14.5a4 4 0 018 0" stroke-width="1.6" stroke-linecap="round"/>' +
-		'<circle cx="12" cy="17" r="1.5" fill="currentColor"/>',
+		'<circle cx="12" cy="17" r="1.5" fill="white" stroke="none"/>',
 
 	ap:
 		'<path d="M1.5 8.5a15 15 0 0121 0" stroke-width="1.6" stroke-linecap="round"/>' +
 		'<path d="M5 12a10 10 0 0114 0" stroke-width="1.6" stroke-linecap="round"/>' +
 		'<path d="M8.5 15.5a5 5 0 017 0" stroke-width="1.6" stroke-linecap="round"/>' +
-		'<circle cx="12" cy="19" r="1.5" fill="currentColor"/>',
+		'<circle cx="12" cy="19" r="1.5" fill="white" stroke="none"/>',
 
 	unknown:
 		'<circle cx="12" cy="12" r="9" stroke-width="1.6"/>' +
 		'<path d="M9.5 9a2.5 2.5 0 015 0c0 2-2.5 2.5-2.5 5" stroke-width="1.6" stroke-linecap="round"/>' +
-		'<circle cx="12" cy="18" r="1" fill="currentColor"/>',
+		'<circle cx="12" cy="18" r="1" fill="white" stroke="none"/>',
 };
 
+// Brighter palette — works on dark canvas and is readable in the table
 const TYPE_COLOR = {
-	router: '#546e7a', computer: '#1565c0',
-	phone_apple: '#37474f', phone_android: '#2e7d32',
-	tablet: '#6a1b9a', tv: '#e65100', streaming: '#ad1457',
-	speaker: '#00695c', printer: '#4e342e', gaming: '#7b1fa2',
-	powerline: '#f57f17', nas: '#0277bd', iot: '#558b2f',
-	ap: '#1565c0', unknown: '#9e9e9e',
+	router:        '#5c8fa8',
+	computer:      '#1e88e5',
+	phone_apple:   '#78909c',
+	phone_android: '#43a047',
+	tablet:        '#9c27b0',
+	tv:            '#ef6c00',
+	streaming:     '#d81b60',
+	speaker:       '#00897b',
+	printer:       '#795548',
+	gaming:        '#7b1fa2',
+	powerline:     '#f9a825',
+	nas:           '#0288d1',
+	iot:           '#7cb342',
+	ap:            '#1976d2',
+	unknown:       '#78909c',
 };
 
 const TYPE_LABEL = {
-	router: 'Router / Gateway', computer: 'Computer / Laptop',
-	phone_apple: 'iPhone / Apple Device', phone_android: 'Android Phone',
-	tablet: 'Tablet', tv: 'Smart TV', streaming: 'Streaming Device',
-	speaker: 'Smart Speaker', printer: 'Printer', gaming: 'Games Console',
-	powerline: 'Powerline Adapter', nas: 'NAS / Server',
-	iot: 'IoT / Smart Home', ap: 'Access Point', unknown: 'Unknown',
+	router:        'Router / Gateway',
+	computer:      'Computer / Laptop',
+	phone_apple:   'iPhone / Apple Device',
+	phone_android: 'Android Phone',
+	tablet:        'Tablet',
+	tv:            'Smart TV',
+	streaming:     'Streaming Device',
+	speaker:       'Smart Speaker',
+	printer:       'Printer',
+	gaming:        'Games Console',
+	powerline:     'Powerline Adapter',
+	nas:           'NAS / Server',
+	iot:           'IoT / Smart Home',
+	ap:            'Access Point',
+	unknown:       'Unknown',
 };
 
 // ============================================================
-// CSS  (injected once into <head>)
+// CSS
 // ============================================================
 const CSS = `
 .nm-wrap{font-family:inherit}
 .nm-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
 .nm-tb{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
 .nm-layout{display:flex;gap:1rem;margin-bottom:1rem;min-height:420px}
-.nm-map-panel{flex:1;border:1px solid var(--border-color,#ddd);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;background:var(--bg-color,#fff)}
-.nm-map-hdr{display:flex;justify-content:space-between;align-items:center;padding:.4rem .75rem;background:var(--heading-bg,#f5f5f5);border-bottom:1px solid var(--border-color,#ddd);font-size:.85rem;font-weight:600}
-#nm-map-wrap{flex:1;overflow:auto;min-height:360px}
+.nm-map-panel{flex:1;border:1px solid var(--border-color,#ddd);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.nm-map-hdr{display:flex;justify-content:space-between;align-items:center;padding:.4rem .75rem;background:rgba(13,27,42,0.95);border-bottom:1px solid rgba(80,140,200,0.25);font-size:.85rem;font-weight:600;color:#90bdd8}
+#nm-map-wrap{flex:1;overflow:auto;min-height:360px;background:linear-gradient(160deg,#0d1b2a 0%,#081016 100%)}
 #nm-map{width:100%;min-width:480px;display:block}
-.nm-detail{width:280px;border:1px solid var(--border-color,#ddd);border-radius:4px;background:var(--bg-color,#fff);display:flex;flex-direction:column;flex-shrink:0}
+.nm-detail{width:280px;border:1px solid var(--border-color,#ddd);border-radius:6px;background:var(--bg-color,#fff);display:flex;flex-direction:column;flex-shrink:0}
 .nm-detail-hdr{display:flex;justify-content:space-between;align-items:center;padding:.4rem .75rem;background:var(--heading-bg,#f5f5f5);border-bottom:1px solid var(--border-color,#ddd);font-weight:600;font-size:.85rem}
 .nm-detail-body{padding:.75rem;overflow-y:auto;flex:1}
 .nm-detail-icon{display:flex;justify-content:center;margin-bottom:.75rem}
@@ -158,7 +177,7 @@ const CSS = `
 .nm-tbl th{background:var(--heading-bg,#f9f9f9);cursor:pointer;user-select:none;font-size:.8rem}
 .nm-tbl th:hover{background:var(--hover-bg,#efefef)}
 .nm-tbl tbody tr:hover{background:var(--row-hover,#f5f8ff);cursor:pointer}
-.nm-tbl .ic{width:28px;text-align:center}
+.nm-tbl .ic{width:32px;text-align:center}
 .nm-btn{padding:.3rem .7rem;border:1px solid var(--border-color,#ccc);border-radius:3px;cursor:pointer;font-size:.82rem;background:var(--btn-bg,#f5f5f5);color:var(--text-color,#333)}
 .nm-btn:hover{background:var(--btn-hover,#e8e8e8)}
 .nm-btn-p{background:#2196f3;border-color:#1976d2;color:#fff}
@@ -178,23 +197,18 @@ const CSS = `
 .nm-sig-b{width:4px;background:#ccc;border-radius:1px}
 .nm-sig-b.a{background:#4caf50}.nm-sig-b.m{background:#ff9800}.nm-sig-b.w{background:#f44336}
 .nm-node{cursor:pointer}
-.nm-node:hover .nm-node-bg{opacity:.15}
-.nm-node-bg{fill:currentColor;opacity:0;transition:opacity .15s}
-.nm-lbl{font-size:11px;fill:var(--text-color,#333);text-anchor:middle;pointer-events:none;font-family:sans-serif}
-.nm-lbl-ip{font-size:9px;fill:var(--muted-color,#999);text-anchor:middle;pointer-events:none;font-family:sans-serif}
-.nm-grp-lbl{font-size:11px;fill:var(--muted-color,#666);text-anchor:middle;font-family:sans-serif;font-weight:600}
-.nm-edge{stroke:var(--border-color,#ccc);stroke-width:1.5;fill:none}
-.nm-edge-w{stroke:#90caf9;stroke-dasharray:4 3}
-.nm-sel{fill:none;stroke:#2196f3;stroke-width:2.5}
+.nm-node-bg{opacity:0;transition:opacity .18s}
+.nm-node:hover .nm-node-bg{opacity:.18}
+.nm-sel-ring{fill:none;stroke:rgba(100,200,255,0.9);stroke-width:2.5;pointer-events:none}
 `;
 
 // ============================================================
 // Utilities
 // ============================================================
-const SVG = 'http://www.w3.org/2000/svg';
+const SVG_NS = 'http://www.w3.org/2000/svg';
 
 function svgEl(tag, attrs, inner) {
-	const el = document.createElementNS(SVG, tag);
+	const el = document.createElementNS(SVG_NS, tag);
 	Object.entries(attrs || {}).forEach(([ k, v ]) => el.setAttribute(k, v));
 	if (inner) el.innerHTML = inner;
 	return el;
@@ -229,11 +243,60 @@ function sigBars(dbm) {
 	return `<span class="nm-sig" title="${dbm} dBm">${bars}</span> ${dbm} dBm`;
 }
 
+// Render icon as a coloured circle with white icon inside — used in detail panel and table
 function iconSVG(type, size, color) {
 	const key = ICONS[type] ? type : 'unknown';
 	const c   = color || TYPE_COLOR[type] || TYPE_COLOR.unknown;
-	return `<svg xmlns="${SVG}" viewBox="0 0 24 24" width="${size}" height="${size}" `+
-	       `fill="none" stroke="${c}" style="color:${c};vertical-align:middle">${ICONS[key]}</svg>`;
+	const r   = size / 2 - 1;
+	const ic  = size * 0.52;
+	const io  = (size - ic) / 2;
+	return `<svg xmlns="${SVG_NS}" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">` +
+		`<circle cx="${size/2}" cy="${size/2}" r="${r}" fill="${c}"/>` +
+		`<g transform="translate(${io},${io}) scale(${ic/24})" fill="none" stroke="white" stroke-opacity="0.92">` +
+		ICONS[key] +
+		`</g></svg>`;
+}
+
+// Build SVG <defs> block — filters and per-type gradients
+function buildDefs(deviceTypes) {
+	const defs = svgEl('defs');
+
+	defs.innerHTML =
+		// Node glow
+		'<filter id="nm-glow" x="-50%" y="-50%" width="200%" height="200%">' +
+		'  <feGaussianBlur stdDeviation="3.5" result="b"/>' +
+		'  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+		'</filter>' +
+		// Stronger glow for router
+		'<filter id="nm-glow-r" x="-70%" y="-70%" width="240%" height="240%">' +
+		'  <feGaussianBlur stdDeviation="6" result="b"/>' +
+		'  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+		'</filter>' +
+		// Edge glow
+		'<filter id="nm-glow-e" x="-20%" y="-20%" width="140%" height="140%">' +
+		'  <feGaussianBlur stdDeviation="1.5" result="b"/>' +
+		'  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+		'</filter>' +
+		// Platform glow beneath each node
+		'<radialGradient id="nm-plat-g" cx="50%" cy="25%" r="50%">' +
+		'  <stop offset="0%" stop-color="white" stop-opacity="0.35"/>' +
+		'  <stop offset="100%" stop-color="white" stop-opacity="0"/>' +
+		'</radialGradient>';
+
+	// Per-type radial gradient for node fill
+	const seen = new Set(deviceTypes);
+	seen.add('router');
+	seen.forEach(type => {
+		const c  = TYPE_COLOR[type] || TYPE_COLOR.unknown;
+		const id = 'nm-ng-' + type.replace(/_/g, '-');
+		defs.innerHTML +=
+			`<radialGradient id="${id}" cx="38%" cy="32%" r="65%">` +
+			`<stop offset="0%" stop-color="${c}" stop-opacity="1"/>` +
+			`<stop offset="100%" stop-color="${c}" stop-opacity="0.55"/>` +
+			`</radialGradient>`;
+	});
+
+	return defs;
 }
 
 // ============================================================
@@ -241,10 +304,10 @@ function iconSVG(type, size, color) {
 // ============================================================
 function renderTopology(svg, data, onSelect) {
 	svg.innerHTML = '';
-	const devices  = data.devices   || [];
-	const ifaces   = data.interfaces || [];
+	const devices = data.devices   || [];
+	const ifaces  = data.interfaces || [];
 
-	// Group devices by interface name
+	// Group devices by interface
 	const byIface = {};
 	ifaces.forEach(i => { byIface[i.name] = []; });
 	devices.forEach(d => {
@@ -252,12 +315,16 @@ function renderTopology(svg, data, onSelect) {
 		(byIface[k] = byIface[k] || []).push(d);
 	});
 
-	// Only include interfaces that have devices (plus wired always)
 	const groups = ifaces.filter(i => i.name === 'wired' || (byIface[i.name] || []).length > 0);
 
-	const NODE_R  = 26, NODE_W = 68, NODE_H = 82;
-	const GRP_PAD = 20, COL_PAD = 40;
-	const TOP_Y   = 65, GRP_Y  = 170, DEV_COLS = 3;
+	const NODE_R   = 24;
+	const NODE_W   = 64;
+	const NODE_H   = 82;
+	const GRP_PAD  = 22;
+	const COL_PAD  = 36;
+	const TOP_Y    = 68;
+	const GRP_Y    = 178;
+	const DEV_COLS = 3;
 
 	let totalW = COL_PAD;
 	const gPos = groups.map(iface => {
@@ -269,110 +336,206 @@ function renderTopology(svg, data, onSelect) {
 		return pos;
 	});
 
-	const svgW = Math.max(600, totalW);
-	const maxRows = Math.max(1, ...groups.map(i =>
-		Math.ceil((byIface[i.name] || []).length / DEV_COLS)));
-	const svgH = GRP_Y + 50 + maxRows * NODE_H + 30;
-	const routerX = svgW / 2;
+	const svgW     = Math.max(600, totalW);
+	const maxRows  = Math.max(1, ...groups.map(i => Math.ceil((byIface[i.name] || []).length / DEV_COLS)));
+	const svgH     = GRP_Y + 60 + maxRows * NODE_H + 36;
+	const routerX  = svgW / 2;
 
 	svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
 	svg.style.height = svgH + 'px';
 
 	// Defs
-	const defs = svgEl('defs');
-	defs.innerHTML =
-		'<filter id="nms" x="-20%" y="-20%" width="140%" height="140%">' +
-		'<feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity=".18"/></filter>';
-	svg.appendChild(defs);
+	const types = devices.map(d => d.device_type || 'unknown');
+	svg.appendChild(buildDefs(types));
 
-	// Router node
-	const rG = svgEl('g', { class: 'nm-node', 'data-mac': '__router__' });
-	rG.appendChild(svgEl('circle', {
-		cx: routerX, cy: TOP_Y, r: NODE_R + 4,
-		fill: '#e3f2fd', stroke: '#90caf9', 'stroke-width': '2', filter: 'url(#nms)'
+	// Background
+	svg.appendChild(svgEl('rect', { x:0, y:0, width:svgW, height:svgH, fill:'#0d1b2a' }));
+
+	// Subtle horizontal grid lines for depth
+	for (let gy = 80; gy < svgH; gy += 60) {
+		svg.appendChild(svgEl('line', {
+			x1:0, y1:gy, x2:svgW, y2:gy,
+			stroke:'rgba(80,130,180,0.06)', 'stroke-width':'1'
+		}));
+	}
+
+	// ---- Router node ----
+	const rG = svgEl('g', { class:'nm-node', 'data-mac':'__router__' });
+
+	// Pulse halos
+	[ NODE_R+18, NODE_R+11 ].forEach((r, i) => rG.appendChild(svgEl('circle', {
+		cx:routerX, cy:TOP_Y, r,
+		fill:'none',
+		stroke:`rgba(100,180,255,${i ? '0.22' : '0.11'})`,
+		'stroke-width':'1'
+	})));
+
+	// Platform glow
+	rG.appendChild(svgEl('ellipse', {
+		cx:routerX, cy:TOP_Y+NODE_R+3, rx:NODE_R+10, ry:5,
+		fill:'url(#nm-plat-g)', opacity:'0.7'
 	}));
+
+	// Main circle
+	rG.appendChild(svgEl('circle', {
+		cx:routerX, cy:TOP_Y, r:NODE_R+5,
+		fill:'url(#nm-ng-router)', filter:'url(#nm-glow-r)'
+	}));
+	rG.appendChild(svgEl('circle', {
+		cx:routerX, cy:TOP_Y, r:NODE_R+5,
+		fill:'none', stroke:'rgba(144,186,233,0.55)', 'stroke-width':'1.5'
+	}));
+
+	// Icon (white)
 	const rIcon = svgEl('g', {
-		transform: `translate(${routerX-12},${TOP_Y-12})`,
-		fill: 'none', stroke: TYPE_COLOR.router
+		transform:`translate(${routerX-12},${TOP_Y-12})`, fill:'none',
+		stroke:'white', 'stroke-opacity':'0.95'
 	});
 	rIcon.innerHTML = ICONS.router;
 	rG.appendChild(rIcon);
-	rG.appendChild(svgEl('text', { x: routerX, y: TOP_Y+NODE_R+14, class: 'nm-lbl', 'font-weight': '600' },
-		data.meta?.router_ip || 'Gateway'));
+
+	// Label
+	rG.appendChild(svgEl('text', {
+		x:routerX, y:TOP_Y+NODE_R+20,
+		fill:'#c0d8ee', 'text-anchor':'middle', 'font-size':'11',
+		'font-family':'sans-serif', 'font-weight':'700', 'pointer-events':'none'
+	}, data.meta?.router_ip || 'Gateway'));
+
 	svg.appendChild(rG);
 
-	// Groups
+	// ---- Groups ----
 	gPos.forEach(({ iface, devs, x, w }) => {
-		const cx   = x + w / 2;
-		const isWi = iface.type === 'wifi';
-		const eCls = 'nm-edge' + (isWi ? ' nm-edge-w' : '');
+		const cx      = x + w / 2;
+		const isWifi  = iface.type === 'wifi';
+		const devRows = Math.ceil(devs.length / DEV_COLS) || 1;
+		const grpH    = 38 + 50 + devRows * NODE_H + 16;
+		const edgeClr = isWifi ? 'rgba(80,200,255,0.45)' : 'rgba(140,180,220,0.35)';
 
-		// Router → group connector
-		svg.insertBefore(svgEl('path', {
-			d: `M${routerX},${TOP_Y+NODE_R+4} C${routerX},${GRP_Y-50} ${cx},${GRP_Y-50} ${cx},${GRP_Y}`,
-			class: eCls
-		}), rG);
-
-		// Group header
-		const hG = svgEl('g');
-		hG.appendChild(svgEl('rect', {
-			x, y: GRP_Y-22, width: w, height: 20, rx: 4,
-			fill: isWi ? '#e3f2fd' : '#f5f5f5',
-			stroke: isWi ? '#90caf9' : '#bdbdbd', 'stroke-width': '1'
+		// Connector: router → group
+		svg.appendChild(svgEl('path', {
+			d:`M${routerX},${TOP_Y+NODE_R+6} C${routerX},${GRP_Y-55} ${cx},${GRP_Y-55} ${cx},${GRP_Y-28}`,
+			fill:'none', stroke:edgeClr, 'stroke-width':'1.5',
+			'stroke-dasharray': isWifi ? '5 3' : 'none',
+			filter:'url(#nm-glow-e)'
 		}));
-		hG.appendChild(svgEl('text', { x: cx, y: GRP_Y-7, class: 'nm-grp-lbl' },
-			iface.display || iface.name));
-		if (iface.ssid)
-			hG.appendChild(svgEl('text', { x: cx, y: GRP_Y+8, class: 'nm-lbl-ip' },
-				`"${iface.ssid}"`));
-		svg.appendChild(hG);
 
-		// Device nodes
+		// Group background card
+		svg.appendChild(svgEl('rect', {
+			x:x+4, y:GRP_Y-34, width:w-8, height:grpH, rx:10,
+			fill: isWifi ? 'rgba(30,80,140,0.18)' : 'rgba(60,80,100,0.15)',
+			stroke: isWifi ? 'rgba(80,160,240,0.2)' : 'rgba(160,180,200,0.15)',
+			'stroke-width':'1', 'stroke-dasharray':'6 4'
+		}));
+
+		// Group label
+		svg.appendChild(svgEl('text', {
+			x:cx, y:GRP_Y-16,
+			fill: isWifi ? 'rgba(140,200,255,0.85)' : 'rgba(180,200,220,0.75)',
+			'text-anchor':'middle', 'font-size':'11',
+			'font-family':'sans-serif', 'font-weight':'600', 'letter-spacing':'0.4',
+			'pointer-events':'none'
+		}, iface.display || iface.name));
+
+		if (iface.ssid) {
+			svg.appendChild(svgEl('text', {
+				x:cx, y:GRP_Y-3,
+				fill:'rgba(120,180,230,0.55)', 'text-anchor':'middle',
+				'font-size':'9', 'font-family':'sans-serif', 'pointer-events':'none'
+			}, `"${iface.ssid}"  ch${iface.channel}`));
+		}
+
+		// ---- Device nodes ----
 		devs.forEach((dev, idx) => {
-			const col = idx % DEV_COLS;
-			const row = Math.floor(idx / DEV_COLS);
-			const dx  = x + GRP_PAD + col * NODE_W + NODE_W / 2;
-			const dy  = GRP_Y + 50 + row * NODE_H;
-
-			svg.insertBefore(svgEl('line', {
-				x1: cx, y1: GRP_Y, x2: dx, y2: dy - NODE_R, class: eCls
-			}), hG);
-
-			const color   = dev.online ? (TYPE_COLOR[dev.device_type] || TYPE_COLOR.unknown) : '#bdbdbd';
+			const col     = idx % DEV_COLS;
+			const row     = Math.floor(idx / DEV_COLS);
+			const dx      = x + GRP_PAD + col * NODE_W + NODE_W / 2;
+			const dy      = GRP_Y + 52 + row * NODE_H;
+			const online  = dev.online !== false;
+			const color   = online ? (TYPE_COLOR[dev.device_type] || TYPE_COLOR.unknown) : '#4a6070';
 			const iconKey = ICONS[dev.device_type] ? dev.device_type : 'unknown';
-			const label   = (dev.custom_name || dev.hostname || dev.mac.slice(-8));
+			const gradId  = 'nm-ng-' + (dev.device_type || 'unknown').replace(/_/g, '-');
+			const label   = dev.custom_name || dev.hostname || dev.mac.slice(-8);
 
-			const dG = svgEl('g', { class: 'nm-node', 'data-mac': dev.mac, style: `color:${color}` });
-			dG.appendChild(svgEl('circle', { cx: dx, cy: dy, r: NODE_R+6, class: 'nm-node-bg', fill: color }));
-			dG.appendChild(svgEl('circle', {
-				cx: dx, cy: dy, r: NODE_R,
-				fill: dev.online ? '#fff' : '#f5f5f5',
-				stroke: color, 'stroke-width': '1.8', filter: 'url(#nms)'
+			// Group → device connector
+			svg.appendChild(svgEl('line', {
+				x1:cx, y1:GRP_Y+4, x2:dx, y2:dy-NODE_R-3,
+				stroke:edgeClr, 'stroke-width':'1',
+				'stroke-dasharray': isWifi ? '4 3' : 'none'
 			}));
 
-			const ig = svgEl('g', { transform: `translate(${dx-12},${dy-12})`, fill: 'none', stroke: color });
-			ig.innerHTML = ICONS[iconKey];
-			dG.appendChild(ig);
+			const dG = svgEl('g', { class:'nm-node', 'data-mac':dev.mac });
 
-			// Signal dot
-			if (dev.signal != null) {
-				const sc = dev.signal >= -60 ? '#4caf50' : dev.signal >= -70 ? '#ff9800' : '#f44336';
-				dG.appendChild(svgEl('circle', {
-					cx: dx+NODE_R-5, cy: dy-NODE_R+5, r: 5, fill: sc, stroke: '#fff', 'stroke-width': '1'
+			// Hover highlight
+			dG.appendChild(svgEl('circle', {
+				cx:dx, cy:dy, r:NODE_R+8,
+				fill:color, 'class':'nm-node-bg'
+			}));
+
+			// Platform glow
+			if (online) {
+				dG.appendChild(svgEl('ellipse', {
+					cx:dx, cy:dy+NODE_R-1, rx:NODE_R+5, ry:4,
+					fill:color, opacity:'0.4', filter:'url(#nm-glow)'
 				}));
 			}
 
-			// Offline strike-through
-			if (!dev.online)
-				dG.appendChild(svgEl('line', {
-					x1: dx-10, y1: dy-10, x2: dx+10, y2: dy+10,
-					stroke: '#ef9a9a', 'stroke-width': '2', 'stroke-linecap': 'round'
-				}));
+			// Node circle
+			dG.appendChild(svgEl('circle', {
+				cx:dx, cy:dy, r:NODE_R,
+				fill: online ? `url(#${gradId})` : '#1e3040',
+				filter: online ? 'url(#nm-glow)' : 'none'
+			}));
 
-			dG.appendChild(svgEl('text', { x: dx, y: dy+NODE_R+13, class: 'nm-lbl' },
-				label.length > 10 ? label.slice(0,9)+'…' : label));
-			if (dev.ip)
-				dG.appendChild(svgEl('text', { x: dx, y: dy+NODE_R+24, class: 'nm-lbl-ip' }, dev.ip));
+			// Border ring
+			dG.appendChild(svgEl('circle', {
+				cx:dx, cy:dy, r:NODE_R,
+				fill:'none', stroke:color, 'stroke-width':'1.2',
+				opacity: online ? '0.65' : '0.3'
+			}));
+
+			// White icon
+			const ig = svgEl('g', {
+				transform:`translate(${dx-12},${dy-12})`,
+				fill:'none', stroke:'white',
+				'stroke-opacity': online ? '0.92' : '0.35'
+			});
+			ig.innerHTML = ICONS[iconKey];
+			dG.appendChild(ig);
+
+			// Signal quality dot (wireless only)
+			if (dev.signal != null) {
+				const sc = dev.signal >= -60 ? '#4caf50' : dev.signal >= -70 ? '#ff9800' : '#f44336';
+				dG.appendChild(svgEl('circle', {
+					cx:dx+NODE_R-4, cy:dy-NODE_R+4, r:5,
+					fill:sc, stroke:'rgba(0,0,0,0.45)', 'stroke-width':'1',
+					filter:'url(#nm-glow)'
+				}));
+			}
+
+			// Offline strikethrough
+			if (!online) {
+				dG.appendChild(svgEl('line', {
+					x1:dx-10, y1:dy-10, x2:dx+10, y2:dy+10,
+					stroke:'rgba(200,100,100,0.6)', 'stroke-width':'2', 'stroke-linecap':'round'
+				}));
+			}
+
+			// Name label
+			dG.appendChild(svgEl('text', {
+				x:dx, y:dy+NODE_R+14,
+				fill: online ? '#c0d8ee' : 'rgba(160,180,200,0.5)',
+				'text-anchor':'middle', 'font-size':'11',
+				'font-family':'sans-serif', 'pointer-events':'none'
+			}, label.length > 10 ? label.slice(0,9)+'…' : label));
+
+			// IP label
+			if (dev.ip) {
+				dG.appendChild(svgEl('text', {
+					x:dx, y:dy+NODE_R+25,
+					fill:'rgba(130,175,220,0.5)', 'text-anchor':'middle',
+					'font-size':'9', 'font-family':'sans-serif', 'pointer-events':'none'
+				}, dev.ip));
+			}
 
 			dG.addEventListener('click', () => onSelect(dev));
 			svg.appendChild(dG);
@@ -389,7 +552,7 @@ function renderDetail(container, dev) {
 	const label   = dev.custom_name || dev.hostname || dev.mac;
 
 	container.innerHTML =
-		`<div class="nm-detail-icon">${iconSVG(iconKey, 64, color)}</div>` +
+		`<div class="nm-detail-icon">${iconSVG(iconKey, 72, color)}</div>` +
 		`<dl class="nm-kv">` +
 		`<dt>Name</dt><dd>${esc(label)}</dd>` +
 		`<dt>Type</dt><dd>${esc(TYPE_LABEL[dev.device_type] || dev.device_type)}</dd>` +
@@ -397,10 +560,10 @@ function renderDetail(container, dev) {
 		`<dt>MAC</dt><dd>${esc(dev.mac)}</dd>` +
 		`<dt>Vendor</dt><dd>${esc(dev.vendor || '—')}</dd>` +
 		`<dt>Interface</dt><dd>${esc(dev.interface || '—')}</dd>` +
-		(dev.signal != null ? `<dt>Signal</dt><dd>${sigBars(dev.signal)}</dd>` : '') +
-		(dev.tx_rate       ? `<dt>TX rate</dt><dd>${dev.tx_rate} Mbps</dd>`   : '') +
-		(dev.rx_rate       ? `<dt>RX rate</dt><dd>${dev.rx_rate} Mbps</dd>`   : '') +
-		(dev.os_guess      ? `<dt>OS guess</dt><dd>${esc(dev.os_guess)}</dd>` : '') +
+		(dev.signal  != null ? `<dt>Signal</dt><dd>${sigBars(dev.signal)}</dd>` : '') +
+		(dev.tx_rate         ? `<dt>TX rate</dt><dd>${dev.tx_rate} Mbps</dd>`   : '') +
+		(dev.rx_rate         ? `<dt>RX rate</dt><dd>${dev.rx_rate} Mbps</dd>`   : '') +
+		(dev.os_guess        ? `<dt>OS guess</dt><dd>${esc(dev.os_guess)}</dd>` : '') +
 		`<dt>Status</dt><dd class="${dev.online?'nm-online':'nm-offline'}">${dev.online?'● Online':'○ Offline'}</dd>` +
 		`<dt>First seen</dt><dd>${esc(fmtDate(dev.first_seen))}</dd>` +
 		`<dt>Last seen</dt><dd>${esc(fmtDate(dev.last_seen))}</dd>` +
@@ -432,7 +595,7 @@ function renderTable(tbody, devices, filter, sortKey, sortDir, onSelect) {
 		const color   = TYPE_COLOR[dev.device_type] || TYPE_COLOR.unknown;
 		const iconKey = ICONS[dev.device_type] ? dev.device_type : 'unknown';
 		return `<tr data-mac="${esc(dev.mac)}">
-			<td class="ic">${iconSVG(iconKey, 20, color)}</td>
+			<td class="ic">${iconSVG(iconKey, 24, color)}</td>
 			<td>${esc(dev.custom_name || dev.hostname || '') || '<span class="nm-muted">—</span>'}</td>
 			<td>${esc(dev.ip || '—')}</td>
 			<td><code>${esc(dev.mac)}</code></td>
@@ -450,7 +613,7 @@ function renderTable(tbody, devices, filter, sortKey, sortDir, onSelect) {
 }
 
 // ============================================================
-// Module-level state (persists across poll updates)
+// Module-level state
 // ============================================================
 let _data     = null;
 let _selected = null;
@@ -473,7 +636,6 @@ return view.extend({
 	render: function(data) {
 		_data = data || { meta:{}, interfaces:[], devices:[] };
 
-		// Inject CSS once
 		if (!document.getElementById('nm-css')) {
 			const s = document.createElement('style');
 			s.id = 'nm-css';
@@ -495,11 +657,11 @@ return view.extend({
 <div class="nm-layout">
   <div class="nm-map-panel">
     <div class="nm-map-hdr">
-      <span>Topology</span>
-      <span id="nm-ls" class="nm-muted"></span>
+      <span>Network Topology</span>
+      <span id="nm-ls" style="font-size:.8rem;opacity:.7"></span>
     </div>
     <div id="nm-map-wrap">
-      <svg id="nm-map" xmlns="http://www.w3.org/2000/svg"></svg>
+      <svg id="nm-map" xmlns="${SVG_NS}"></svg>
     </div>
   </div>
   <div id="nm-detail" class="nm-detail nm-hidden">
@@ -531,14 +693,13 @@ return view.extend({
   </table>
 </div>`;
 
-		// ---- Wire up events ----
 		const $ = id => wrap.querySelector('#' + id);
 
 		$('nm-quick').addEventListener('click', () => this._scan('quick', wrap));
 		$('nm-deep' ).addEventListener('click', () => this._scan('deep',  wrap));
 		$('nm-dt-close').addEventListener('click', () => {
 			$('nm-detail').classList.add('nm-hidden');
-			document.getElementById('nm-sel')?.remove();
+			wrap.querySelector('.nm-sel-ring')?.remove();
 		});
 		$('nm-filter').addEventListener('input', e => {
 			_filter = e.target.value;
@@ -553,16 +714,11 @@ return view.extend({
 			});
 		});
 
-		// Initial render
 		this._update(wrap);
 
-		// Auto-refresh via LuCI poll (60 s)
 		poll.add(L.bind(function() {
 			if (!wrap.querySelector('#nm-ar').checked) return;
-			return callGetDevices().then(d => {
-				_data = d;
-				this._update(wrap);
-			});
+			return callGetDevices().then(d => { _data = d; this._update(wrap); });
 		}, this), 60);
 
 		return wrap;
@@ -570,23 +726,26 @@ return view.extend({
 
 	_selectDevice: function(dev, wrap) {
 		_selected = dev;
+
 		// Remove old selection ring
-		document.getElementById('nm-sel')?.remove();
-		// Add new ring
+		wrap.querySelector('.nm-sel-ring')?.remove();
+
+		// Add new selection ring around the clicked node's main circle
 		const node = wrap.querySelector(`[data-mac="${CSS.escape(dev.mac)}"]`);
 		if (node) {
 			const circles = node.querySelectorAll('circle');
-			if (circles[1]) {
-				const ring = document.createElementNS(SVG, 'circle');
-				ring.setAttribute('cx', circles[1].getAttribute('cx'));
-				ring.setAttribute('cy', circles[1].getAttribute('cy'));
-				ring.setAttribute('r',  +circles[1].getAttribute('r') + 4);
-				ring.setAttribute('class', 'nm-sel');
-				ring.id = 'nm-sel';
+			// Third circle is the main node circle (after hover-bg and platform glow)
+			const mainCircle = circles[2] || circles[circles.length - 1];
+			if (mainCircle) {
+				const ring = document.createElementNS(SVG_NS, 'circle');
+				ring.setAttribute('cx', mainCircle.getAttribute('cx'));
+				ring.setAttribute('cy', mainCircle.getAttribute('cy'));
+				ring.setAttribute('r',  +mainCircle.getAttribute('r') + 5);
+				ring.setAttribute('class', 'nm-sel-ring');
 				node.appendChild(ring);
 			}
 		}
-		// Show detail panel
+
 		const title = wrap.querySelector('#nm-dt-title');
 		const body  = wrap.querySelector('#nm-dt-body');
 		const panel = wrap.querySelector('#nm-detail');
@@ -599,26 +758,20 @@ return view.extend({
 		if (!_data) return;
 		const devices = _data.devices || [];
 
-		// Status
 		const st = wrap.querySelector('#nm-st');
 		if (st) { st.className = 'nm-st-ok'; st.textContent = `${devices.length} devices`; }
 
-		// Last scan
 		const ls = wrap.querySelector('#nm-ls');
 		if (ls) ls.textContent = _data.meta?.last_scan ? `Last scan: ${fmtRel(_data.meta.last_scan)}` : '';
 
-		// Device count
 		const cnt = wrap.querySelector('#nm-cnt');
 		if (cnt) cnt.textContent = devices.length;
 
-		// Topology
 		const svg = wrap.querySelector('#nm-map');
 		if (svg) renderTopology(svg, _data, dev => this._selectDevice(dev, wrap));
 
-		// Table
 		this._tbl(wrap);
 
-		// Re-select if panel is open
 		if (_selected) {
 			const fresh = devices.find(d => d.mac === _selected.mac);
 			if (fresh) {
@@ -661,10 +814,7 @@ return view.extend({
 				} else {
 					wrap.querySelector('#nm-quick').disabled = false;
 					wrap.querySelector('#nm-deep' ).disabled = false;
-					return callGetDevices().then(d => {
-						_data = d;
-						this._update(wrap);
-					});
+					return callGetDevices().then(d => { _data = d; this._update(wrap); });
 				}
 			}).catch(() => {
 				wrap.querySelector('#nm-quick').disabled = false;

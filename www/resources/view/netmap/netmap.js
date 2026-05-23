@@ -22,6 +22,12 @@ const callScan = rpc.declare({
 	params: ['mode'],
 	expect: {}
 });
+const callSetName = rpc.declare({
+	object: 'luci.netmap',
+	method: 'set_device_name',
+	params: ['mac', 'name'],
+	expect: {}
+});
 
 // ============================================================
 // Icons  (24×24 SVG path content, stroke="currentColor")
@@ -196,6 +202,9 @@ const CSS = `
 .nm-sig-b{width:4px;background:#ccc;border-radius:1px}
 .nm-sig-b.a{background:#4caf50}.nm-sig-b.m{background:#ff9800}.nm-sig-b.w{background:#f44336}
 .nm-lat-good{color:#2e7d32;font-weight:600}.nm-lat-ok{color:#f57c00;font-weight:600}.nm-lat-warn{color:#e65100;font-weight:600}.nm-lat-bad{color:#c62828;font-weight:600}
+.nm-name-edit{margin-top:.75rem;display:flex;gap:.4rem}
+.nm-name-inp{flex:1;padding:.3rem .5rem;border:1px solid var(--border-color,#ccc);border-radius:3px;font-size:.82rem;background:var(--input-bg,#fff);color:var(--text-color,#333)}
+.nm-name-msg{font-size:.75rem;margin-top:.3rem;min-height:1em}
 .nm-node{cursor:grab}
 .nm-node:active{cursor:grabbing}
 .nm-node-bg{opacity:0;transition:opacity .18s}
@@ -652,7 +661,13 @@ function renderDetail(container, dev) {
 		`<dt>Status</dt><dd class="${dev.online?'nm-online':'nm-offline'}">${dev.online?'● Online':'○ Offline'}</dd>` +
 		`<dt>First seen</dt><dd>${esc(fmtDate(dev.first_seen))}</dd>` +
 		`<dt>Last seen</dt><dd>${esc(fmtDate(dev.last_seen))}</dd>` +
-		`</dl>`;
+		`</dl>` +
+		`<div class="nm-name-edit">` +
+		`<input id="nm-name-inp" class="nm-name-inp" type="text" ` +
+		`value="${esc(dev.custom_name || '')}" placeholder="Custom name…">` +
+		`<button id="nm-name-save" class="nm-btn nm-btn-p">Save</button>` +
+		`</div>` +
+		`<div id="nm-name-msg" class="nm-name-msg"></div>`;
 }
 
 // ============================================================
@@ -835,6 +850,36 @@ return view.extend({
 		if (body) {
 			try { renderDetail(body, dev); }
 			catch(err) { body.textContent = 'Error: ' + err; }
+
+			const inp     = body.querySelector('#nm-name-inp');
+			const saveBtn = body.querySelector('#nm-name-save');
+			const msg     = body.querySelector('#nm-name-msg');
+			const self    = this;
+			if (saveBtn && inp) {
+				saveBtn.addEventListener('click', function() {
+					const name = inp.value.trim();
+					saveBtn.disabled = true;
+					if (msg) msg.textContent = 'Saving…';
+					callSetName(dev.mac, name).then(function(res) {
+						if (res && res.error) {
+							if (msg) msg.textContent = 'Error: ' + res.error;
+						} else {
+							if (msg) msg.textContent = name ? 'Saved.' : 'Name cleared.';
+							return callGetDevices().then(function(d) {
+								_data = d;
+								self._update(wrap);
+								// Re-open panel with fresh device data
+								const fresh = (_data.devices || []).find(function(d) { return d.mac === dev.mac; });
+								if (fresh) self._selectDevice(fresh, wrap);
+							});
+						}
+					}).catch(function() {
+						if (msg) msg.textContent = 'Save failed.';
+					}).finally(function() {
+						saveBtn.disabled = false;
+					});
+				});
+			}
 		}
 
 		// Selection ring on SVG node

@@ -8,7 +8,7 @@
 		},
 		"write": {
 			"ubus": {
-				"luci.netmap": [ "trigger_scan" ]
+				"luci.netmap": [ "trigger_scan", "set_device_name" ]
 			}
 		}
 	}

@@ -456,13 +456,6 @@ function renderTopology(svg, data, onSelect) {
 			const gradId  = 'nm-ng-' + (dev.device_type || 'unknown').replace(/_/g, '-');
 			const label   = dev.custom_name || dev.hostname || dev.mac.slice(-8);
 
-			// Group → device connector
-			svg.appendChild(svgEl('line', {
-				x1:cx, y1:GRP_Y+4, x2:dx, y2:dy-NODE_R-3,
-				stroke:edgeClr, 'stroke-width':'1',
-				'stroke-dasharray': isWifi ? '4 3' : 'none'
-			}));
-
 			const dG = svgEl('g', { class:'nm-node', 'data-mac':dev.mac });
 
 			// Hover highlight

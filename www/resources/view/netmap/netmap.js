@@ -405,26 +405,28 @@ function renderTopology(svg, data, positions, onSelect) {
 
 	const groups = ifaces.filter(i => i.name === 'wired' || (byIface[i.name] || []).length > 0);
 
-	const NODE_R   = 24;
-	const NODE_W   = 64;
-	const NODE_H   = 82;
-	const GRP_PAD  = 22;
-	const COL_PAD  = 36;
-	const TOP_Y    = 68;
-	const GRP_Y    = 178;
-	const DEV_COLS = 3;
+	const NODE_R  = 24;
+	const NODE_W  = 62;
+	const NODE_H  = 82;
+	const GRP_PAD = 18;
+	const GRP_GAP = 16;
+	const TOP_Y   = 68;
+	const GRP_Y   = 178;
 
-	let totalW = COL_PAD;
+	// All groups share equal width filling the full SVG
+	const numGroups = groups.length || 1;
+	const svgW      = 1100;
+	const grpW      = Math.floor((svgW - GRP_GAP * (numGroups + 1)) / numGroups);
+	const DEV_COLS  = Math.max(1, Math.min(6, Math.floor((grpW - GRP_PAD * 2) / NODE_W)));
+
+	let startX = GRP_GAP;
 	const gPos = groups.map(iface => {
 		const devs = byIface[iface.name] || [];
-		const cols = Math.max(1, Math.min(devs.length, DEV_COLS));
-		const w    = cols * NODE_W + GRP_PAD * 2;
-		const pos  = { iface, devs, x: totalW, w };
-		totalW += w + COL_PAD;
+		const pos  = { iface, devs, x: startX, w: grpW };
+		startX += grpW + GRP_GAP;
 		return pos;
 	});
 
-	const svgW    = Math.max(600, totalW);
 	const maxRows = Math.max(1, ...groups.map(i => Math.ceil((byIface[i.name] || []).length / DEV_COLS)));
 	const svgH    = GRP_Y + 60 + maxRows * NODE_H + 36;
 	const routerX = svgW / 2;
@@ -483,21 +485,12 @@ function renderTopology(svg, data, positions, onSelect) {
 		const isWifi  = iface.type === 'wifi';
 		const devRows = Math.ceil(devs.length / DEV_COLS) || 1;
 		const grpH    = 38 + 50 + devRows * NODE_H + 16;
-		const edgeClr = isWifi ? 'rgba(80,200,255,0.45)' : 'rgba(140,180,220,0.35)';
 
 		// Drag bounds for devices in this group (node centre must stay inside)
-		const bx1 = x + 4 + NODE_R + 4;
-		const bx2 = x + w - 8 - NODE_R - 4;
+		const bx1 = x + GRP_PAD;
+		const bx2 = x + w - GRP_PAD;
 		const by1 = GRP_Y + 20;
 		const by2 = GRP_Y - 34 + grpH - NODE_R - 6;
-
-		// Router → group connector
-		svg.appendChild(svgEl('path', {
-			d:`M${routerX},${TOP_Y+NODE_R+6} C${routerX},${GRP_Y-55} ${cx},${GRP_Y-55} ${cx},${GRP_Y-28}`,
-			fill:'none', stroke:edgeClr, 'stroke-width':'1.5',
-			'stroke-dasharray': isWifi ? '5 3' : 'none',
-			filter:'url(#nm-glow-e)'
-		}));
 
 		// Group card
 		svg.appendChild(svgEl('rect', {

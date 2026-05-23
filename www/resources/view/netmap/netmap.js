@@ -661,13 +661,7 @@ function renderDetail(container, dev) {
 		`<dt>Status</dt><dd class="${dev.online?'nm-online':'nm-offline'}">${dev.online?'● Online':'○ Offline'}</dd>` +
 		`<dt>First seen</dt><dd>${esc(fmtDate(dev.first_seen))}</dd>` +
 		`<dt>Last seen</dt><dd>${esc(fmtDate(dev.last_seen))}</dd>` +
-		`</dl>` +
-		`<div class="nm-name-edit">` +
-		`<input id="nm-name-inp" class="nm-name-inp" type="text" ` +
-		`value="${esc(dev.custom_name || '')}" placeholder="Custom name…">` +
-		`<button id="nm-name-save" class="nm-btn nm-btn-p">Save</button>` +
-		`</div>` +
-		`<div id="nm-name-msg" class="nm-name-msg"></div>`;
+		`</dl>`;
 }
 
 // ============================================================
@@ -771,6 +765,11 @@ return view.extend({
       <button id="nm-dt-close" class="nm-btn-x">&#10005;</button>
     </div>
     <div id="nm-dt-body" class="nm-detail-body"></div>
+    <div class="nm-name-edit">
+      <input id="nm-name-inp" class="nm-name-inp" type="text" placeholder="Custom name…">
+      <button id="nm-name-save" class="nm-btn nm-btn-p">Save</button>
+    </div>
+    <div id="nm-name-msg" class="nm-name-msg"></div>
   </div>
 </div>
 <div class="nm-tbl-panel">
@@ -814,6 +813,32 @@ return view.extend({
 			$('nm-detail').classList.add('nm-hidden');
 			wrap.querySelector('.nm-sel-ring')?.remove();
 		});
+
+		$('nm-name-save').addEventListener('click', () => {
+			if (!_selected) return;
+			const inp  = $('nm-name-inp');
+			const msg  = $('nm-name-msg');
+			const btn  = $('nm-name-save');
+			const name = inp ? inp.value.trim() : '';
+			if (btn) btn.disabled = true;
+			if (msg) msg.textContent = 'Saving…';
+			callSetName(_selected.mac, name).then(res => {
+				if (res && res.error) {
+					if (msg) msg.textContent = 'Error: ' + res.error;
+					if (btn) btn.disabled = false;
+				} else {
+					if (msg) msg.textContent = name ? 'Saved.' : 'Name cleared.';
+					if (btn) btn.disabled = false;
+					return callGetDevices().then(d => {
+						_data = d;
+						this._update(wrap);
+					});
+				}
+			}).catch(() => {
+				if (msg) msg.textContent = 'Save failed.';
+				if (btn) btn.disabled = false;
+			});
+		});
 		$('nm-filter').addEventListener('input', e => {
 			_filter = e.target.value;
 			this._tbl(wrap);
@@ -850,37 +875,13 @@ return view.extend({
 		if (body) {
 			try { renderDetail(body, dev); }
 			catch(err) { body.textContent = 'Error: ' + err; }
-
-			const inp     = body.querySelector('#nm-name-inp');
-			const saveBtn = body.querySelector('#nm-name-save');
-			const msg     = body.querySelector('#nm-name-msg');
-			const self    = this;
-			if (saveBtn && inp) {
-				saveBtn.addEventListener('click', function() {
-					const name = inp.value.trim();
-					saveBtn.disabled = true;
-					if (msg) msg.textContent = 'Saving…';
-					callSetName(dev.mac, name).then(function(res) {
-						if (res && res.error) {
-							if (msg) msg.textContent = 'Error: ' + res.error;
-						} else {
-							if (msg) msg.textContent = name ? 'Saved.' : 'Name cleared.';
-							return callGetDevices().then(function(d) {
-								_data = d;
-								self._update(wrap);
-								// Re-open panel with fresh device data
-								const fresh = (_data.devices || []).find(function(d) { return d.mac === dev.mac; });
-								if (fresh) self._selectDevice(fresh, wrap);
-							});
-						}
-					}).catch(function() {
-						if (msg) msg.textContent = 'Save failed.';
-					}).finally(function() {
-						saveBtn.disabled = false;
-					});
-				});
-			}
 		}
+
+		// Populate the static name editor (wired once in render)
+		const inp = wrap.querySelector('#nm-name-inp');
+		const msg = wrap.querySelector('#nm-name-msg');
+		if (inp) inp.value = dev.custom_name || '';
+		if (msg) msg.textContent = '';
 
 		// Selection ring on SVG node
 		var rings = wrap.querySelectorAll('.nm-sel-ring');

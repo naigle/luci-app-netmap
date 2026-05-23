@@ -706,7 +706,6 @@ let _sortKey          = 'hostname';
 let _sortDir          = 'asc';
 let _filter           = '';
 let _groupBounds      = {};   // mac → { x1, y1, x2, y2 }
-let _onSelectDevice   = null; // set each _update, consumed by SVG click delegation
 
 // ============================================================
 // View
@@ -781,16 +780,17 @@ return view.extend({
 </div>`;
 
 		const $ = id => wrap.querySelector('#' + id);
+		const self = this;
 
-		// SVG click delegation — wired once, uses _onSelectDevice set each _update
-		$('nm-map').addEventListener('click', e => {
-			const node = e.target.closest('.nm-node[data-mac]');
-			if (!node || node.dataset.mac === '__router__') return;
-			const mac = node.dataset.mac;
-			if (_data && _onSelectDevice) {
-				const dev = _data.devices.find(d => d.mac === mac);
-				if (dev) _onSelectDevice(dev);
-			}
+		// SVG click delegation — wired once in render, survives poll redraws
+		$('nm-map').addEventListener('click', function(e) {
+			const node = e.target.closest('[data-mac]');
+			if (!node) return;
+			const mac = node.getAttribute('data-mac');
+			if (!mac || mac === '__router__') return;
+			if (!_data) return;
+			const dev = _data.devices.find(function(d) { return d.mac === mac; });
+			if (dev) self._selectDevice(dev, wrap);
 		});
 
 		$('nm-quick').addEventListener('click', () => this._scan('quick', wrap));
@@ -825,25 +825,33 @@ return view.extend({
 	_selectDevice: function(dev, wrap) {
 		_selected = dev;
 
-		wrap.querySelector('.nm-sel-ring')?.remove();
-
-		const node = wrap.querySelector(`[data-mac="${CSS.escape(dev.mac)}"]`);
-		if (node) {
-			// With transform-based nodes, main circle is at origin — add ring at (0,0)
-			const ring = document.createElementNS(SVG_NS, 'circle');
-			ring.setAttribute('cx', '0');
-			ring.setAttribute('cy', '0');
-			ring.setAttribute('r',  String(24 + 5));   // NODE_R + 5
-			ring.setAttribute('class', 'nm-sel-ring');
-			node.appendChild(ring);
-		}
-
+		// Show panel immediately so it's visible even if renderDetail errors
+		const panel = wrap.querySelector('#nm-detail');
 		const title = wrap.querySelector('#nm-dt-title');
 		const body  = wrap.querySelector('#nm-dt-body');
-		const panel = wrap.querySelector('#nm-detail');
-		if (title) title.textContent = dev.custom_name || dev.hostname || dev.mac;
-		if (body)  renderDetail(body, dev);
 		if (panel) panel.classList.remove('nm-hidden');
+		if (title) title.textContent = dev.custom_name || dev.hostname || dev.mac;
+
+		if (body) {
+			try { renderDetail(body, dev); }
+			catch(err) { body.textContent = 'Error: ' + err; }
+		}
+
+		// Selection ring on SVG node
+		var rings = wrap.querySelectorAll('.nm-sel-ring');
+		for (var i = 0; i < rings.length; i++) rings[i].remove();
+		var svgNodes = wrap.querySelectorAll('.nm-node[data-mac]');
+		for (var j = 0; j < svgNodes.length; j++) {
+			if (svgNodes[j].getAttribute('data-mac') === dev.mac) {
+				var ring = document.createElementNS(SVG_NS, 'circle');
+				ring.setAttribute('cx', '0');
+				ring.setAttribute('cy', '0');
+				ring.setAttribute('r', '29');
+				ring.setAttribute('class', 'nm-sel-ring');
+				svgNodes[j].appendChild(ring);
+				break;
+			}
+		}
 	},
 
 	_update: function(wrap) {
@@ -858,8 +866,6 @@ return view.extend({
 
 		const cnt = wrap.querySelector('#nm-cnt');
 		if (cnt) cnt.textContent = devices.length;
-
-		_onSelectDevice = dev => this._selectDevice(dev, wrap);
 
 		const svg = wrap.querySelector('#nm-map');
 		if (svg) {

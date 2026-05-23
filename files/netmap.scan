@@ -177,7 +177,7 @@ log "  Latency: $(wc -l < "$TMP_DIR/latency.txt") hosts"
 # ============================================================
 > "$TMP_DIR/existing.txt"
 if [ -f "$DEVICES_FILE" ]; then
-    # Use ucode to extract: mac TAB first_seen TAB custom_name
+    # Use ucode to extract: mac TAB first_seen TAB custom_name TAB custom_type
     ucode -e '
 import { open } from "fs";
 const f = open(ARGV[0], "r");
@@ -186,7 +186,7 @@ if (f) {
     try { d = json(f.read("all")); } catch(e) {}
     f.close();
     for (const dev of (d?.devices ?? [])) {
-        print(dev.mac + "\t" + (dev.first_seen ?? "") + "\t" + (dev.custom_name ?? "") + "\n");
+        print(dev.mac + "\t" + (dev.first_seen ?? "") + "\t" + (dev.custom_name ?? "") + "\t" + (dev.custom_type ?? "") + "\n");
     }
 }
 ' "$DEVICES_FILE" > "$TMP_DIR/existing.txt" 2>/dev/null || true

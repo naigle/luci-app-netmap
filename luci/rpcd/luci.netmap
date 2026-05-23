@@ -51,20 +51,27 @@ const methods = {
 		}
 	},
 
-	// Set a custom display name for a device; persists in devices.json and /etc/config/dhcp
+	// Set custom name and/or type for a device; persists in devices.json and /etc/config/dhcp
 	set_device_name: {
-		args: { mac: 'xx:xx:xx:xx:xx:xx', name: '' },
+		args: { mac: 'xx:xx:xx:xx:xx:xx', name: '', type: '' },
 		call: function(req) {
 			const mac  = lc(trim(req.args?.mac ?? ''));
 			const name = trim(req.args?.name ?? '');
+			const type = trim(req.args?.type ?? '');
 			if (!mac) return { error: 'missing mac' };
 
-			// Update custom_name in devices.json
+			// Update custom_name and custom_type in devices.json
 			const data = readDevices();
 			let found = false;
 			for (let _i, dev in (data.devices ?? [])) {
 				if (lc(dev.mac) === mac) {
 					dev.custom_name = name;
+					if (length(type)) {
+						dev.custom_type  = type;
+						dev.device_type  = type;
+					} else {
+						dev.custom_type  = '';
+					}
 					found = true;
 					break;
 				}
@@ -97,7 +104,7 @@ const methods = {
 
 			uci.commit('dhcp');
 			system([ '/etc/init.d/dnsmasq', 'reload' ]);
-			return { ok: true, mac, name };
+			return { ok: true, mac, name, type };
 		}
 	},
 

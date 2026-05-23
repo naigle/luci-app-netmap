@@ -25,7 +25,7 @@ const callScan = rpc.declare({
 const callSetName = rpc.declare({
 	object: 'luci.netmap',
 	method: 'set_device_name',
-	params: ['mac', 'name'],
+	params: ['mac', 'name', 'type'],
 	expect: {}
 });
 
@@ -204,9 +204,12 @@ const CSS = `
 .nm-lat-good{color:#2e7d32;font-weight:600}.nm-lat-ok{color:#f57c00;font-weight:600}.nm-lat-warn{color:#e65100;font-weight:600}.nm-lat-bad{color:#c62828;font-weight:600}
 .nm-btn-edit{background:transparent;border:none;cursor:pointer;padding:.1rem .3rem;line-height:1;color:var(--muted-color,#888);flex-shrink:0;display:flex;align-items:center}
 .nm-btn-edit:hover{color:var(--text-color,#333)}
-.nm-name-edit{display:flex;gap:.4rem;padding:.5rem .75rem;border-bottom:1px solid var(--border-color,#ddd);background:var(--hover-bg,#f0f4ff)}
-.nm-name-inp{flex:1;padding:.3rem .5rem;border:1px solid #4a90d9;border-radius:3px;font-size:.82rem;background:var(--input-bg,#fff);color:var(--text-color,#333);outline:none}
-.nm-name-inp:focus{border-color:#1976d2;box-shadow:0 0 0 2px rgba(25,118,210,.2)}
+.nm-name-edit{display:flex;flex-direction:column;gap:.4rem;padding:.5rem .75rem;border-bottom:1px solid var(--border-color,#ddd);background:var(--hover-bg,#f0f4ff)}
+.nm-edit-field{display:flex;align-items:center;gap:.4rem}
+.nm-edit-field label{font-size:.75rem;font-weight:600;color:var(--muted-color,#888);width:2.8rem;flex-shrink:0}
+.nm-name-inp,.nm-type-sel{flex:1;padding:.3rem .5rem;border:1px solid #4a90d9;border-radius:3px;font-size:.82rem;background:var(--input-bg,#fff);color:var(--text-color,#333);outline:none}
+.nm-name-inp:focus,.nm-type-sel:focus{border-color:#1976d2;box-shadow:0 0 0 2px rgba(25,118,210,.2)}
+.nm-edit-actions{display:flex;gap:.4rem;justify-content:flex-end}
 .nm-name-msg{font-size:.75rem;padding:.15rem .75rem;color:#e65100;min-height:1.2em}
 .nm-node{cursor:grab}
 .nm-node:active{cursor:grabbing}
@@ -769,9 +772,34 @@ return view.extend({
       <button id="nm-dt-close" class="nm-btn-x">&#10005;</button>
     </div>
     <div id="nm-name-edit" class="nm-name-edit nm-hidden">
-      <input id="nm-name-inp" class="nm-name-inp" type="text" placeholder="Custom name…">
-      <button id="nm-name-save" class="nm-btn nm-btn-p" title="Save">&#10003;</button>
-      <button id="nm-name-cancel" class="nm-btn" title="Cancel">&#10005;</button>
+      <div class="nm-edit-field">
+        <label>Name</label>
+        <input id="nm-name-inp" class="nm-name-inp" type="text" placeholder="Custom name…">
+      </div>
+      <div class="nm-edit-field">
+        <label>Type</label>
+        <select id="nm-type-sel" class="nm-type-sel">
+          <option value="">— auto-detect —</option>
+          <option value="computer">Computer / Laptop</option>
+          <option value="phone_apple">iPhone / Apple Device</option>
+          <option value="phone_android">Android Phone</option>
+          <option value="tablet">Tablet</option>
+          <option value="tv">Smart TV</option>
+          <option value="streaming">Streaming Device</option>
+          <option value="speaker">Smart Speaker</option>
+          <option value="printer">Printer</option>
+          <option value="gaming">Games Console</option>
+          <option value="nas">NAS / Storage</option>
+          <option value="iot">IoT / Smart Home</option>
+          <option value="ap">Access Point</option>
+          <option value="powerline">Powerline Adapter</option>
+          <option value="unknown">Unknown</option>
+        </select>
+      </div>
+      <div class="nm-edit-actions">
+        <button id="nm-name-cancel" class="nm-btn">Cancel</button>
+        <button id="nm-name-save" class="nm-btn nm-btn-p">Save</button>
+      </div>
     </div>
     <div id="nm-name-msg" class="nm-name-msg"></div>
     <div id="nm-dt-body" class="nm-detail-body"></div>
@@ -821,8 +849,10 @@ return view.extend({
 
 		const startEdit = () => {
 			const inp = $('nm-name-inp');
+			const sel = $('nm-type-sel');
 			if (inp) {
 				inp.value = (_selected && _selected.custom_name) || '';
+				if (sel) sel.value = (_selected && _selected.custom_type) || '';
 				$('nm-name-edit').classList.remove('nm-hidden');
 				$('nm-name-msg').textContent = '';
 				inp.focus();
@@ -845,8 +875,9 @@ return view.extend({
 		$('nm-name-save').addEventListener('click', () => {
 			if (!_selected) return;
 			const name = $('nm-name-inp').value.trim();
+			const type = $('nm-type-sel').value;
 			$('nm-name-save').disabled = true;
-			callSetName(_selected.mac, name).then(res => {
+			callSetName(_selected.mac, name, type).then(res => {
 				$('nm-name-save').disabled = false;
 				if (res && res.error) {
 					$('nm-name-msg').textContent = 'Error: ' + res.error;

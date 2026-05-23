@@ -154,7 +154,7 @@ for (let _i, row in nmapRows)
 
 let existing = {};
 for (let _i, row in existRows)
-    if (row[0]) existing[lc(row[0])] = { first_seen: row[1] ?? '', custom_name: row[2] ?? '' };
+    if (row[0]) existing[lc(row[0])] = { first_seen: row[1] ?? '', custom_name: row[2] ?? '', custom_type: row[3] ?? '' };
 
 let latencyMS = {};
 for (let _i, row in latencyRows)
@@ -183,16 +183,18 @@ for (let mac in allMacs) {
     let ouiResult  = ouiLookup(mac);
     let vendor     = ouiResult[0];
     let ouiType    = ouiResult[1];
-    let deviceType = classify(hostname, ouiType, osGuess);
 
-    let hist      = existing[mac] ?? {};
-    let firstSeen = length(hist.first_seen) ? hist.first_seen : now;
+    let hist        = existing[mac] ?? {};
+    let firstSeen   = length(hist.first_seen) ? hist.first_seen : now;
+    let customType  = hist.custom_type ?? '';
+    let deviceType  = length(customType) ? customType : classify(hostname, ouiType, osGuess);
 
     push(devices, {
         mac,
         ip,
         hostname,
         custom_name:  hist.custom_name ?? '',
+        custom_type:  customType,
         vendor,
         device_type:  deviceType,
         interface:    sta ? sta.iface    : 'wired',

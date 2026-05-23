@@ -112,7 +112,6 @@ const ICONS = {
 		'<circle cx="12" cy="18" r="1" fill="white" stroke="none"/>',
 };
 
-// Brighter palette — works on dark canvas and is readable in the table
 const TYPE_COLOR = {
 	router:        '#5c8fa8',
 	computer:      '#1e88e5',
@@ -160,7 +159,7 @@ const CSS = `
 .nm-map-panel{flex:1;border:1px solid var(--border-color,#ddd);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
 .nm-map-hdr{display:flex;justify-content:space-between;align-items:center;padding:.4rem .75rem;background:rgba(13,27,42,0.95);border-bottom:1px solid rgba(80,140,200,0.25);font-size:.85rem;font-weight:600;color:#90bdd8}
 #nm-map-wrap{flex:1;overflow:auto;min-height:360px;background:linear-gradient(160deg,#0d1b2a 0%,#081016 100%)}
-#nm-map{width:100%;min-width:480px;display:block}
+#nm-map{width:100%;min-width:480px;display:block;user-select:none}
 .nm-detail{width:280px;border:1px solid var(--border-color,#ddd);border-radius:6px;background:var(--bg-color,#fff);display:flex;flex-direction:column;flex-shrink:0}
 .nm-detail-hdr{display:flex;justify-content:space-between;align-items:center;padding:.4rem .75rem;background:var(--heading-bg,#f5f5f5);border-bottom:1px solid var(--border-color,#ddd);font-weight:600;font-size:.85rem}
 .nm-detail-body{padding:.75rem;overflow-y:auto;flex:1}
@@ -196,10 +195,12 @@ const CSS = `
 .nm-sig{display:inline-flex;gap:2px;align-items:flex-end;height:14px;vertical-align:middle}
 .nm-sig-b{width:4px;background:#ccc;border-radius:1px}
 .nm-sig-b.a{background:#4caf50}.nm-sig-b.m{background:#ff9800}.nm-sig-b.w{background:#f44336}
-.nm-node{cursor:pointer}
+.nm-node{cursor:grab}
+.nm-node:active{cursor:grabbing}
 .nm-node-bg{opacity:0;transition:opacity .18s}
 .nm-node:hover .nm-node-bg{opacity:.18}
 .nm-sel-ring{fill:none;stroke:rgba(100,200,255,0.9);stroke-width:2.5;pointer-events:none}
+.nm-dragging{cursor:grabbing!important}
 `;
 
 // ============================================================
@@ -243,7 +244,6 @@ function sigBars(dbm) {
 	return `<span class="nm-sig" title="${dbm} dBm">${bars}</span> ${dbm} dBm`;
 }
 
-// Render icon as a coloured circle with white icon inside — used in detail panel and table
 function iconSVG(type, size, color) {
 	const key = ICONS[type] ? type : 'unknown';
 	const c   = color || TYPE_COLOR[type] || TYPE_COLOR.unknown;
@@ -257,33 +257,26 @@ function iconSVG(type, size, color) {
 		`</g></svg>`;
 }
 
-// Build SVG <defs> block — filters and per-type gradients
 function buildDefs(deviceTypes) {
 	const defs = svgEl('defs');
-
 	defs.innerHTML =
-		// Node glow
 		'<filter id="nm-glow" x="-50%" y="-50%" width="200%" height="200%">' +
 		'  <feGaussianBlur stdDeviation="3.5" result="b"/>' +
 		'  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
 		'</filter>' +
-		// Stronger glow for router
 		'<filter id="nm-glow-r" x="-70%" y="-70%" width="240%" height="240%">' +
 		'  <feGaussianBlur stdDeviation="6" result="b"/>' +
 		'  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
 		'</filter>' +
-		// Edge glow
 		'<filter id="nm-glow-e" x="-20%" y="-20%" width="140%" height="140%">' +
 		'  <feGaussianBlur stdDeviation="1.5" result="b"/>' +
 		'  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
 		'</filter>' +
-		// Platform glow beneath each node
 		'<radialGradient id="nm-plat-g" cx="50%" cy="25%" r="50%">' +
 		'  <stop offset="0%" stop-color="white" stop-opacity="0.35"/>' +
 		'  <stop offset="100%" stop-color="white" stop-opacity="0"/>' +
 		'</radialGradient>';
 
-	// Per-type radial gradient for node fill
 	const seen = new Set(deviceTypes);
 	seen.add('router');
 	seen.forEach(type => {
@@ -295,19 +288,114 @@ function buildDefs(deviceTypes) {
 			`<stop offset="100%" stop-color="${c}" stop-opacity="0.55"/>` +
 			`</radialGradient>`;
 	});
-
 	return defs;
 }
 
 // ============================================================
-// Topology renderer
+// Position persistence  (localStorage)
 // ============================================================
-function renderTopology(svg, data, onSelect) {
+const POS_KEY = 'netmap-node-positions';
+
+function loadPositions() {
+	try { return JSON.parse(localStorage.getItem(POS_KEY) || '{}'); } catch { return {}; }
+}
+
+function savePosition(mac, x, y) {
+	const all = loadPositions();
+	all[mac] = { x: Math.round(x), y: Math.round(y) };
+	try { localStorage.setItem(POS_KEY, JSON.stringify(all)); } catch {}
+}
+
+// ============================================================
+// Drag-and-drop
+// ============================================================
+function attachDrag(svg, groupBounds) {
+	let drag = null;   // { node, mac, startSVG, startPos, bounds }
+
+	function clientToSVG(cx, cy) {
+		const pt = svg.createSVGPoint();
+		pt.x = cx; pt.y = cy;
+		return pt.matrixTransform(svg.getScreenCTM().inverse());
+	}
+
+	function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+	function getNodeCenter(node) {
+		const t = node.getAttribute('transform') || '';
+		const m = t.match(/translate\(\s*([\d.+-]+)[,\s]+([\d.+-]+)\s*\)/);
+		return m ? { x: parseFloat(m[1]), y: parseFloat(m[2]) } : { x: 0, y: 0 };
+	}
+
+	function setNodeCenter(node, x, y) {
+		node.setAttribute('transform', `translate(${x},${y})`);
+	}
+
+	function onStart(clientX, clientY) {
+		const target = document.elementFromPoint(clientX, clientY);
+		if (!target) return;
+		const node = target.closest('.nm-node[data-mac]');
+		if (!node || node.dataset.mac === '__router__') return;
+
+		const mac    = node.dataset.mac;
+		const bounds = groupBounds[mac];
+		if (!bounds) return;
+
+		drag = {
+			node,
+			mac,
+			bounds,
+			startSVG: clientToSVG(clientX, clientY),
+			startPos: getNodeCenter(node),
+		};
+		svg.classList.add('nm-dragging');
+	}
+
+	function onMove(clientX, clientY) {
+		if (!drag) return;
+		const svgPt = clientToSVG(clientX, clientY);
+		const dx    = svgPt.x - drag.startSVG.x;
+		const dy    = svgPt.y - drag.startSVG.y;
+		const nx    = clamp(drag.startPos.x + dx, drag.bounds.x1, drag.bounds.x2);
+		const ny    = clamp(drag.startPos.y + dy, drag.bounds.y1, drag.bounds.y2);
+		setNodeCenter(drag.node, nx, ny);
+	}
+
+	function onEnd() {
+		if (!drag) return;
+		const pos = getNodeCenter(drag.node);
+		savePosition(drag.mac, pos.x, pos.y);
+		svg.classList.remove('nm-dragging');
+		drag = null;
+	}
+
+	// Mouse
+	svg.addEventListener('mousedown',  e => { onStart(e.clientX, e.clientY); });
+	svg.addEventListener('mousemove',  e => { if (drag) { e.preventDefault(); onMove(e.clientX, e.clientY); } });
+	svg.addEventListener('mouseup',    () => onEnd());
+	svg.addEventListener('mouseleave', () => onEnd());
+
+	// Touch
+	svg.addEventListener('touchstart', e => {
+		if (e.touches.length === 1) onStart(e.touches[0].clientX, e.touches[0].clientY);
+	}, { passive: true });
+	svg.addEventListener('touchmove', e => {
+		if (drag && e.touches.length === 1) {
+			e.preventDefault();
+			onMove(e.touches[0].clientX, e.touches[0].clientY);
+		}
+	}, { passive: false });
+	svg.addEventListener('touchend', () => onEnd());
+}
+
+// ============================================================
+// Topology renderer
+// Returns groupBounds: { [mac]: { x1, y1, x2, y2 } }
+// ============================================================
+function renderTopology(svg, data, positions, onSelect) {
 	svg.innerHTML = '';
 	const devices = data.devices   || [];
 	const ifaces  = data.interfaces || [];
 
-	// Group devices by interface
 	const byIface = {};
 	ifaces.forEach(i => { byIface[i.name] = []; });
 	devices.forEach(d => {
@@ -336,22 +424,19 @@ function renderTopology(svg, data, onSelect) {
 		return pos;
 	});
 
-	const svgW     = Math.max(600, totalW);
-	const maxRows  = Math.max(1, ...groups.map(i => Math.ceil((byIface[i.name] || []).length / DEV_COLS)));
-	const svgH     = GRP_Y + 60 + maxRows * NODE_H + 36;
-	const routerX  = svgW / 2;
+	const svgW    = Math.max(600, totalW);
+	const maxRows = Math.max(1, ...groups.map(i => Math.ceil((byIface[i.name] || []).length / DEV_COLS)));
+	const svgH    = GRP_Y + 60 + maxRows * NODE_H + 36;
+	const routerX = svgW / 2;
 
 	svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
 	svg.style.height = svgH + 'px';
 
-	// Defs
 	const types = devices.map(d => d.device_type || 'unknown');
 	svg.appendChild(buildDefs(types));
 
-	// Background
 	svg.appendChild(svgEl('rect', { x:0, y:0, width:svgW, height:svgH, fill:'#0d1b2a' }));
 
-	// Subtle horizontal grid lines for depth
 	for (let gy = 80; gy < svgH; gy += 60) {
 		svg.appendChild(svgEl('line', {
 			x1:0, y1:gy, x2:svgW, y2:gy,
@@ -359,24 +444,16 @@ function renderTopology(svg, data, onSelect) {
 		}));
 	}
 
-	// ---- Router node ----
+	// ---- Router node (fixed, not draggable) ----
 	const rG = svgEl('g', { class:'nm-node', 'data-mac':'__router__' });
-
-	// Pulse halos
 	[ NODE_R+18, NODE_R+11 ].forEach((r, i) => rG.appendChild(svgEl('circle', {
 		cx:routerX, cy:TOP_Y, r,
-		fill:'none',
-		stroke:`rgba(100,180,255,${i ? '0.22' : '0.11'})`,
-		'stroke-width':'1'
+		fill:'none', stroke:`rgba(100,180,255,${i ? '0.22' : '0.11'})`, 'stroke-width':'1'
 	})));
-
-	// Platform glow
 	rG.appendChild(svgEl('ellipse', {
 		cx:routerX, cy:TOP_Y+NODE_R+3, rx:NODE_R+10, ry:5,
 		fill:'url(#nm-plat-g)', opacity:'0.7'
 	}));
-
-	// Main circle
 	rG.appendChild(svgEl('circle', {
 		cx:routerX, cy:TOP_Y, r:NODE_R+5,
 		fill:'url(#nm-ng-router)', filter:'url(#nm-glow-r)'
@@ -385,25 +462,22 @@ function renderTopology(svg, data, onSelect) {
 		cx:routerX, cy:TOP_Y, r:NODE_R+5,
 		fill:'none', stroke:'rgba(144,186,233,0.55)', 'stroke-width':'1.5'
 	}));
-
-	// Icon (white)
 	const rIcon = svgEl('g', {
-		transform:`translate(${routerX-12},${TOP_Y-12})`, fill:'none',
-		stroke:'white', 'stroke-opacity':'0.95'
+		transform:`translate(${routerX-12},${TOP_Y-12})`,
+		fill:'none', stroke:'white', 'stroke-opacity':'0.95'
 	});
 	rIcon.innerHTML = ICONS.router;
 	rG.appendChild(rIcon);
-
-	// Label
 	rG.appendChild(svgEl('text', {
 		x:routerX, y:TOP_Y+NODE_R+20,
 		fill:'#c0d8ee', 'text-anchor':'middle', 'font-size':'11',
 		'font-family':'sans-serif', 'font-weight':'700', 'pointer-events':'none'
 	}, data.meta?.router_ip || 'Gateway'));
-
 	svg.appendChild(rG);
 
-	// ---- Groups ----
+	// ---- Groups and device nodes ----
+	const groupBounds = {};   // mac → { x1, y1, x2, y2 } in SVG coords
+
 	gPos.forEach(({ iface, devs, x, w }) => {
 		const cx      = x + w / 2;
 		const isWifi  = iface.type === 'wifi';
@@ -411,7 +485,13 @@ function renderTopology(svg, data, onSelect) {
 		const grpH    = 38 + 50 + devRows * NODE_H + 16;
 		const edgeClr = isWifi ? 'rgba(80,200,255,0.45)' : 'rgba(140,180,220,0.35)';
 
-		// Connector: router → group
+		// Drag bounds for devices in this group (node centre must stay inside)
+		const bx1 = x + 4 + NODE_R + 4;
+		const bx2 = x + w - 8 - NODE_R - 4;
+		const by1 = GRP_Y + 20;
+		const by2 = GRP_Y - 34 + grpH - NODE_R - 6;
+
+		// Router → group connector
 		svg.appendChild(svgEl('path', {
 			d:`M${routerX},${TOP_Y+NODE_R+6} C${routerX},${GRP_Y-55} ${cx},${GRP_Y-55} ${cx},${GRP_Y-28}`,
 			fill:'none', stroke:edgeClr, 'stroke-width':'1.5',
@@ -419,7 +499,7 @@ function renderTopology(svg, data, onSelect) {
 			filter:'url(#nm-glow-e)'
 		}));
 
-		// Group background card
+		// Group card
 		svg.appendChild(svgEl('rect', {
 			x:x+4, y:GRP_Y-34, width:w-8, height:grpH, rx:10,
 			fill: isWifi ? 'rgba(30,80,140,0.18)' : 'rgba(60,80,100,0.15)',
@@ -431,9 +511,8 @@ function renderTopology(svg, data, onSelect) {
 		svg.appendChild(svgEl('text', {
 			x:cx, y:GRP_Y-16,
 			fill: isWifi ? 'rgba(140,200,255,0.85)' : 'rgba(180,200,220,0.75)',
-			'text-anchor':'middle', 'font-size':'11',
-			'font-family':'sans-serif', 'font-weight':'600', 'letter-spacing':'0.4',
-			'pointer-events':'none'
+			'text-anchor':'middle', 'font-size':'11', 'font-family':'sans-serif',
+			'font-weight':'600', 'letter-spacing':'0.4', 'pointer-events':'none'
 		}, iface.display || iface.name));
 
 		if (iface.ssid) {
@@ -444,78 +523,90 @@ function renderTopology(svg, data, onSelect) {
 			}, `"${iface.ssid}"  ch${iface.channel}`));
 		}
 
-		// ---- Device nodes ----
+		// Device nodes — children positioned relative to node centre (0,0)
 		devs.forEach((dev, idx) => {
-			const col     = idx % DEV_COLS;
-			const row     = Math.floor(idx / DEV_COLS);
-			const dx      = x + GRP_PAD + col * NODE_W + NODE_W / 2;
-			const dy      = GRP_Y + 52 + row * NODE_H;
+			const col    = idx % DEV_COLS;
+			const row    = Math.floor(idx / DEV_COLS);
+			const defX   = x + GRP_PAD + col * NODE_W + NODE_W / 2;
+			const defY   = GRP_Y + 52 + row * NODE_H;
+
+			// Use saved position if available, clamped to current bounds
+			const saved  = positions[dev.mac];
+			const cx2    = saved ? Math.max(bx1, Math.min(bx2, saved.x)) : defX;
+			const cy2    = saved ? Math.max(by1, Math.min(by2, saved.y)) : defY;
+
+			// Record drag bounds for this MAC
+			groupBounds[dev.mac] = { x1:bx1, y1:by1, x2:bx2, y2:by2 };
+
 			const online  = dev.online !== false;
 			const color   = online ? (TYPE_COLOR[dev.device_type] || TYPE_COLOR.unknown) : '#4a6070';
 			const iconKey = ICONS[dev.device_type] ? dev.device_type : 'unknown';
 			const gradId  = 'nm-ng-' + (dev.device_type || 'unknown').replace(/_/g, '-');
 			const label   = dev.custom_name || dev.hostname || dev.mac.slice(-8);
 
-			const dG = svgEl('g', { class:'nm-node', 'data-mac':dev.mac });
+			// Node group: transform positions the entire node — drag only updates this
+			const dG = svgEl('g', {
+				class:'nm-node', 'data-mac':dev.mac,
+				transform:`translate(${cx2},${cy2})`
+			});
 
-			// Hover highlight
+			// Hover highlight (at origin)
 			dG.appendChild(svgEl('circle', {
-				cx:dx, cy:dy, r:NODE_R+8,
-				fill:color, 'class':'nm-node-bg'
+				cx:0, cy:0, r:NODE_R+8, fill:color, class:'nm-node-bg'
 			}));
 
 			// Platform glow
 			if (online) {
 				dG.appendChild(svgEl('ellipse', {
-					cx:dx, cy:dy+NODE_R-1, rx:NODE_R+5, ry:4,
+					cx:0, cy:NODE_R-1, rx:NODE_R+5, ry:4,
 					fill:color, opacity:'0.4', filter:'url(#nm-glow)'
 				}));
 			}
 
-			// Node circle
+			// Main circle
 			dG.appendChild(svgEl('circle', {
-				cx:dx, cy:dy, r:NODE_R,
+				cx:0, cy:0, r:NODE_R,
 				fill: online ? `url(#${gradId})` : '#1e3040',
 				filter: online ? 'url(#nm-glow)' : 'none'
 			}));
 
 			// Border ring
 			dG.appendChild(svgEl('circle', {
-				cx:dx, cy:dy, r:NODE_R,
+				cx:0, cy:0, r:NODE_R,
 				fill:'none', stroke:color, 'stroke-width':'1.2',
 				opacity: online ? '0.65' : '0.3'
 			}));
 
-			// White icon
+			// White icon (24×24 centred at origin)
 			const ig = svgEl('g', {
-				transform:`translate(${dx-12},${dy-12})`,
+				transform:'translate(-12,-12)',
 				fill:'none', stroke:'white',
 				'stroke-opacity': online ? '0.92' : '0.35'
 			});
 			ig.innerHTML = ICONS[iconKey];
 			dG.appendChild(ig);
 
-			// Signal quality dot (wireless only)
+			// Signal dot
 			if (dev.signal != null) {
 				const sc = dev.signal >= -60 ? '#4caf50' : dev.signal >= -70 ? '#ff9800' : '#f44336';
 				dG.appendChild(svgEl('circle', {
-					cx:dx+NODE_R-4, cy:dy-NODE_R+4, r:5,
+					cx:NODE_R-4, cy:-NODE_R+4, r:5,
 					fill:sc, stroke:'rgba(0,0,0,0.45)', 'stroke-width':'1',
 					filter:'url(#nm-glow)'
 				}));
 			}
 
-			// Offline strikethrough
+			// Offline strike
 			if (!online) {
 				dG.appendChild(svgEl('line', {
-					x1:dx-10, y1:dy-10, x2:dx+10, y2:dy+10,
+					x1:-10, y1:-10, x2:10, y2:10,
 					stroke:'rgba(200,100,100,0.6)', 'stroke-width':'2', 'stroke-linecap':'round'
 				}));
 			}
 
 			// Name label
 			dG.appendChild(svgEl('text', {
-				x:dx, y:dy+NODE_R+14,
+				x:0, y:NODE_R+14,
 				fill: online ? '#c0d8ee' : 'rgba(160,180,200,0.5)',
 				'text-anchor':'middle', 'font-size':'11',
 				'font-family':'sans-serif', 'pointer-events':'none'
@@ -524,7 +615,7 @@ function renderTopology(svg, data, onSelect) {
 			// IP label
 			if (dev.ip) {
 				dG.appendChild(svgEl('text', {
-					x:dx, y:dy+NODE_R+25,
+					x:0, y:NODE_R+25,
 					fill:'rgba(130,175,220,0.5)', 'text-anchor':'middle',
 					'font-size':'9', 'font-family':'sans-serif', 'pointer-events':'none'
 				}, dev.ip));
@@ -534,6 +625,8 @@ function renderTopology(svg, data, onSelect) {
 			svg.appendChild(dG);
 		});
 	});
+
+	return groupBounds;
 }
 
 // ============================================================
@@ -608,11 +701,12 @@ function renderTable(tbody, devices, filter, sortKey, sortDir, onSelect) {
 // ============================================================
 // Module-level state
 // ============================================================
-let _data     = null;
-let _selected = null;
-let _sortKey  = 'hostname';
-let _sortDir  = 'asc';
-let _filter   = '';
+let _data        = null;
+let _selected    = null;
+let _sortKey     = 'hostname';
+let _sortDir     = 'asc';
+let _filter      = '';
+let _groupBounds = {};   // mac → { x1, y1, x2, y2 }
 
 // ============================================================
 // View
@@ -720,23 +814,17 @@ return view.extend({
 	_selectDevice: function(dev, wrap) {
 		_selected = dev;
 
-		// Remove old selection ring
 		wrap.querySelector('.nm-sel-ring')?.remove();
 
-		// Add new selection ring around the clicked node's main circle
 		const node = wrap.querySelector(`[data-mac="${CSS.escape(dev.mac)}"]`);
 		if (node) {
-			const circles = node.querySelectorAll('circle');
-			// Third circle is the main node circle (after hover-bg and platform glow)
-			const mainCircle = circles[2] || circles[circles.length - 1];
-			if (mainCircle) {
-				const ring = document.createElementNS(SVG_NS, 'circle');
-				ring.setAttribute('cx', mainCircle.getAttribute('cx'));
-				ring.setAttribute('cy', mainCircle.getAttribute('cy'));
-				ring.setAttribute('r',  +mainCircle.getAttribute('r') + 5);
-				ring.setAttribute('class', 'nm-sel-ring');
-				node.appendChild(ring);
-			}
+			// With transform-based nodes, main circle is at origin — add ring at (0,0)
+			const ring = document.createElementNS(SVG_NS, 'circle');
+			ring.setAttribute('cx', '0');
+			ring.setAttribute('cy', '0');
+			ring.setAttribute('r',  String(24 + 5));   // NODE_R + 5
+			ring.setAttribute('class', 'nm-sel-ring');
+			node.appendChild(ring);
 		}
 
 		const title = wrap.querySelector('#nm-dt-title');
@@ -761,7 +849,12 @@ return view.extend({
 		if (cnt) cnt.textContent = devices.length;
 
 		const svg = wrap.querySelector('#nm-map');
-		if (svg) renderTopology(svg, _data, dev => this._selectDevice(dev, wrap));
+		if (svg) {
+			const positions = loadPositions();
+			_groupBounds = renderTopology(svg, _data, positions,
+				dev => this._selectDevice(dev, wrap));
+			attachDrag(svg, _groupBounds);
+		}
 
 		this._tbl(wrap);
 

@@ -398,7 +398,7 @@ function attachDrag(svg, groupBounds) {
 // Topology renderer
 // Returns groupBounds: { [mac]: { x1, y1, x2, y2 } }
 // ============================================================
-function renderTopology(svg, data, positions, onSelect) {
+function renderTopology(svg, data, positions) {
 	svg.innerHTML = '';
 	const devices = data.devices   || [];
 	const ifaces  = data.interfaces || [];
@@ -620,7 +620,6 @@ function renderTopology(svg, data, positions, onSelect) {
 				}, dev.ip));
 			}
 
-			dG.addEventListener('click', () => onSelect(dev));
 			svg.appendChild(dG);
 		});
 	});
@@ -701,12 +700,13 @@ function renderTable(tbody, devices, filter, sortKey, sortDir, onSelect) {
 // ============================================================
 // Module-level state
 // ============================================================
-let _data        = null;
-let _selected    = null;
-let _sortKey     = 'hostname';
-let _sortDir     = 'asc';
-let _filter      = '';
-let _groupBounds = {};   // mac → { x1, y1, x2, y2 }
+let _data             = null;
+let _selected         = null;
+let _sortKey          = 'hostname';
+let _sortDir          = 'asc';
+let _filter           = '';
+let _groupBounds      = {};   // mac → { x1, y1, x2, y2 }
+let _onSelectDevice   = null; // set each _update, consumed by SVG click delegation
 
 // ============================================================
 // View
@@ -782,6 +782,17 @@ return view.extend({
 
 		const $ = id => wrap.querySelector('#' + id);
 
+		// SVG click delegation — wired once, uses _onSelectDevice set each _update
+		$('nm-map').addEventListener('click', e => {
+			const node = e.target.closest('.nm-node[data-mac]');
+			if (!node || node.dataset.mac === '__router__') return;
+			const mac = node.dataset.mac;
+			if (_data && _onSelectDevice) {
+				const dev = _data.devices.find(d => d.mac === mac);
+				if (dev) _onSelectDevice(dev);
+			}
+		});
+
 		$('nm-quick').addEventListener('click', () => this._scan('quick', wrap));
 		$('nm-deep' ).addEventListener('click', () => this._scan('deep',  wrap));
 		$('nm-dt-close').addEventListener('click', () => {
@@ -848,11 +859,12 @@ return view.extend({
 		const cnt = wrap.querySelector('#nm-cnt');
 		if (cnt) cnt.textContent = devices.length;
 
+		_onSelectDevice = dev => this._selectDevice(dev, wrap);
+
 		const svg = wrap.querySelector('#nm-map');
 		if (svg) {
 			const positions = loadPositions();
-			_groupBounds = renderTopology(svg, _data, positions,
-				dev => this._selectDevice(dev, wrap));
+			_groupBounds = renderTopology(svg, _data, positions);
 			attachDrag(svg, _groupBounds);
 		}
 

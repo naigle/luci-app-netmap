@@ -51,7 +51,8 @@ const methods = {
 		}
 	},
 
-	// Set custom name and/or type for a device; persists in devices.json and /etc/config/dhcp
+	// Set custom name and/or type for a device; persists in devices.json
+	// and syncs a static DHCP lease (mac+ip+name) to /etc/config/dhcp
 	set_device_name: {
 		args: { mac: 'xx:xx:xx:xx:xx:xx', name: '', type: '' },
 		call: function(req) {
@@ -63,8 +64,10 @@ const methods = {
 			// Update custom_name and custom_type in devices.json
 			const data = readDevices();
 			let found = false;
+			let devIP  = '';
 			for (let _i, dev in (data.devices ?? [])) {
 				if (lc(dev.mac) === mac) {
+					devIP = dev.ip ?? '';
 					dev.custom_name = name;
 					if (length(type)) {
 						dev.custom_type  = type;
@@ -83,27 +86,27 @@ const methods = {
 			if (wf) { wf.write(sprintf('%J', data)); wf.close(); }
 			system([ 'mv', tmp, DEVICES_FILE ]);
 
-			// Sync to /etc/config/dhcp so dnsmasq serves the name
+			// Sync static DHCP lease — only when we have both a name and an IP
 			const uci = cursor();
 			uci.load('dhcp');
 
-			// Find any existing host section with this MAC
 			let sect = null;
 			uci.foreach('dhcp', 'host', function(s) {
 				if (lc(s.mac ?? '') === mac) { sect = s['.name']; return false; }
 			});
 
-			if (name) {
+			if (name && devIP) {
 				if (!sect) sect = uci.add('dhcp', 'host');
-				uci.set('dhcp', sect, 'mac', mac);
+				uci.set('dhcp', sect, 'mac',  mac);
+				uci.set('dhcp', sect, 'ip',   devIP);
 				uci.set('dhcp', sect, 'name', name);
-			} else if (sect) {
-				// Name cleared — remove the host entry
+			} else if (!name && sect) {
 				uci.delete('dhcp', sect);
 			}
 
 			uci.commit('dhcp');
-			system([ '/etc/init.d/dnsmasq', 'reload' ]);
+			system([ '/bin/sh', '-c', '(sleep 2 && /etc/init.d/dnsmasq reload) >/dev/null 2>&1 &' ]);
+
 			return { ok: true, mac, name, type };
 		}
 	},

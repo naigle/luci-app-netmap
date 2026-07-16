@@ -50,6 +50,7 @@ log "[$SCAN_MODE] Step 2: wireless stations"
 
 > "$TMP_DIR/wifi_ifaces.txt"
 > "$TMP_DIR/wifi_stations.txt"
+> "$TMP_DIR/wifi_survey.txt"
 
 for iface in $(iw dev 2>/dev/null | awk '/Interface/{print $2}'); do
     ip link show "$iface" 2>/dev/null | grep -q 'state UP' || continue
@@ -104,6 +105,30 @@ STATIONEOF
             "$cur_fail" "$cur_retry" "$cur_inactive" \
             >> "$TMP_DIR/wifi_stations.txt"
     fi
+
+    # Parse survey dump — collect stats for the [in use] frequency only
+    _noise="" _active="" _busy="" _tx="" _rx="" _in_use=0
+    while IFS= read -r sline; do
+        case "$sline" in
+            *frequency:*"[in use]"*) _in_use=1 ;;
+            *frequency:*)            _in_use=0 ;;
+            *noise:*)                [ "$_in_use" = 1 ] && _noise=$(printf '%s' "$sline"   | grep -oE '[-0-9]+' | head -1) ;;
+            *"channel active time:"*)   [ "$_in_use" = 1 ] && _active=$(printf '%s' "$sline" | grep -oE '[0-9]+' | head -1) ;;
+            *"channel busy time:"*)     [ "$_in_use" = 1 ] && _busy=$(printf '%s' "$sline"   | grep -oE '[0-9]+' | head -1) ;;
+            *"channel receive time:"*)  [ "$_in_use" = 1 ] && _rx=$(printf '%s' "$sline"     | grep -oE '[0-9]+' | head -1) ;;
+            *"channel transmit time:"*) [ "$_in_use" = 1 ] && _tx=$(printf '%s' "$sline"     | grep -oE '[0-9]+' | head -1) ;;
+        esac
+    done << SURVEYEOF
+$(iw dev "$iface" survey dump 2>/dev/null)
+SURVEYEOF
+    _busy_pct="" _tx_pct="" _rx_pct=""
+    if [ -n "$_active" ] && [ "$_active" -gt 0 ] 2>/dev/null; then
+        _busy_pct=$(( ${_busy:-0} * 100 / _active ))
+        _tx_pct=$(( ${_tx:-0}   * 100 / _active ))
+        _rx_pct=$(( ${_rx:-0}   * 100 / _active ))
+    fi
+    printf '%s\t%s\t%s\t%s\t%s\n' "$iface" "$_noise" "$_busy_pct" "$_tx_pct" "$_rx_pct" \
+        >> "$TMP_DIR/wifi_survey.txt"
 done
 
 log "  Stations: $(wc -l < "$TMP_DIR/wifi_stations.txt")"
@@ -166,9 +191,27 @@ if [ "$SCAN_MODE" = "deep" ]; then
 fi
 
 # ============================================================
-# STEP 6 – Ping latency (parallel, one ping per host)
+# STEP 6 – System health metrics
 # ============================================================
-log "[$SCAN_MODE] Step 6: ping latency"
+log "[$SCAN_MODE] Step 6: system health"
+NPROC=$(nproc 2>/dev/null || grep -c '^processor' /proc/cpuinfo 2>/dev/null || echo 1)
+LOAD1=$(awk '{print $1}' /proc/loadavg)
+LOAD_PCT=$(awk -v l="$LOAD1" -v c="$NPROC" 'BEGIN{p=l/c*100; if(p>100)p=100; printf "%d",p}')
+MEM_TOTAL=$(awk '/MemTotal/{print $2}' /proc/meminfo)
+MEM_FREE=$(awk '/MemFree/{print $2}' /proc/meminfo)
+MEM_BUFS=$(awk '/Buffers/{print $2}' /proc/meminfo)
+MEM_CACHED=$(awk '/^Cached:/{print $2}' /proc/meminfo)
+MEM_PCT=$(awk -v t="$MEM_TOTAL" -v f="$MEM_FREE" -v b="$MEM_BUFS" -v c="$MEM_CACHED" \
+    'BEGIN{printf "%d", (t-f-b-c)*100/t}')
+UPTIME_S=$(awk '{printf "%d", $1}' /proc/uptime)
+WAN_MS=$(ping -c 1 -W 2 8.8.8.8 2>/dev/null | awk -F'/' '/rtt|round-trip/{printf "%d", $5}')
+printf '%s\t%s\t%s\t%s\n' "$LOAD_PCT" "$MEM_PCT" "$UPTIME_S" "${WAN_MS}" > "$TMP_DIR/health.txt"
+log "  load=${LOAD_PCT}% mem=${MEM_PCT}% uptime=${UPTIME_S}s wan=${WAN_MS:-?}ms"
+
+# ============================================================
+# STEP 7 – Ping latency (parallel, one ping per host)
+# ============================================================
+log "[$SCAN_MODE] Step 7: ping latency"
 > "$TMP_DIR/latency.txt"
 while IFS='	' read -r ip _mac; do
     (
@@ -181,19 +224,19 @@ wait
 log "  Latency: $(wc -l < "$TMP_DIR/latency.txt") hosts"
 
 # ============================================================
-# STEP 7 – Preserve history from existing data
+# STEP 8 – Preserve history from existing data
 # ============================================================
 > "$TMP_DIR/existing.txt"
 if [ -f "$DEVICES_FILE" ]; then
     # Use ucode to extract: mac TAB first_seen TAB custom_name TAB custom_type
     ucode -e '
 import { open } from "fs";
-const f = open(ARGV[0], "r");
+let f = open(ARGV[0], "r");
 if (f) {
     let d;
     try { d = json(f.read("all")); } catch(e) {}
     f.close();
-    for (const dev of (d?.devices ?? [])) {
+    for (let _i, dev in (d?.devices ?? [])) {
         print(dev.mac + "\t" + (dev.first_seen ?? "") + "\t" + (dev.custom_name ?? "") + "\t" + (dev.custom_type ?? "") + "\n");
     }
 }
@@ -201,9 +244,9 @@ if (f) {
 fi
 
 # ============================================================
-# STEP 8 – Assemble JSON via ucode
+# STEP 9 – Assemble JSON via ucode
 # ============================================================
-log "[$SCAN_MODE] Step 8: assembling JSON"
+log "[$SCAN_MODE] Step 9: assembling JSON"
 
 ucode "$ASSEMBLE" \
     "$TMP_DIR/arp.txt" \
@@ -219,7 +262,9 @@ ucode "$ASSEMBLE" \
     "$NOW" \
     "$DEVICES_FILE" \
     "$ROUTER_MACS" \
-    "$TMP_DIR/latency.txt"
+    "$TMP_DIR/latency.txt" \
+    "$TMP_DIR/wifi_survey.txt" \
+    "$TMP_DIR/health.txt"
 
 log "[$SCAN_MODE] Scan complete"
 exit 0

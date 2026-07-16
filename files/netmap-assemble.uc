@@ -2,7 +2,7 @@
 // /usr/share/netmap/assemble.uc
 // Merges scan TSV data into /etc/netmap/devices.json
 // Args: arp dhcp stations ifaces nmap_os existing oui_db
-//       scan_net local_ip scan_mode now out_file router_macs_str latency
+//       scan_net local_ip scan_mode now out_file router_macs_str latency survey health
 
 'use strict';
 
@@ -23,6 +23,8 @@ let now        = ARGV[ai++];
 let out_f      = ARGV[ai++];
 let router_macs_str = ARGV[ai++] ?? '';
 let latency_f       = ARGV[ai++] ?? '';
+let survey_f        = ARGV[ai++] ?? '';
+let health_f        = ARGV[ai++] ?? '';
 
 // Router MACs to exclude (keyed object for O(1) lookup)
 let routerMacs = {};
@@ -119,6 +121,8 @@ let ifaceRows   = readTSV(iface_f);
 let nmapRows    = readTSV(nmap_f);
 let existRows   = readTSV(exist_f);
 let latencyRows = readTSV(latency_f);
+let surveyRows  = readTSV(survey_f);
+let healthRows  = readTSV(health_f);
 
 // ---- Build lookup maps ----
 let macToIP  = {};
@@ -162,6 +166,16 @@ for (let _i, row in existRows)
 let latencyMS = {};
 for (let _i, row in latencyRows)
     if (row[0] && length(row[1])) latencyMS[row[0]] = +row[1];
+
+let surveyData = {};
+for (let _i, row in surveyRows) {
+    if (row[0]) surveyData[row[0]] = {
+        noise:    length(row[1]) ? +row[1] : null,
+        busy_pct: length(row[2]) ? +row[2] : null,
+        tx_pct:   length(row[3]) ? +row[3] : null,
+        rx_pct:   length(row[4]) ? +row[4] : null,
+    };
+}
 
 // ---- Collect unique MACs ----
 let allMacs = {};
@@ -222,17 +236,30 @@ let interfaces = [{
 }];
 for (let _i, row in ifaceRows) {
     if (!row[0]) continue;
+    let sv = surveyData[row[0]];
     push(interfaces, {
-        name:    row[0],
-        type:    'wifi',
-        display: (row[2] ?? '?') + ' (' + row[0] + ')',
-        ssid:    row[1] ?? '',
-        band:    row[2] ?? '',
-        channel: length(row[3]) ? +row[3] : 0,
+        name:     row[0],
+        type:     'wifi',
+        display:  (row[2] ?? '?') + ' (' + row[0] + ')',
+        ssid:     row[1] ?? '',
+        band:     row[2] ?? '',
+        channel:  length(row[3]) ? +row[3] : 0,
+        noise:    sv ? sv.noise    : null,
+        busy_pct: sv ? sv.busy_pct : null,
+        tx_pct:   sv ? sv.tx_pct   : null,
+        rx_pct:   sv ? sv.rx_pct   : null,
     });
 }
 
 // ---- Output ----
+let _hr = length(healthRows) ? healthRows[0] : [];
+let health = {
+    load_pct: length(_hr) > 0 && length(_hr[0]) ? +_hr[0] : null,
+    mem_pct:  length(_hr) > 1 && length(_hr[1]) ? +_hr[1] : null,
+    uptime_s: length(_hr) > 2 && length(_hr[2]) ? +_hr[2] : null,
+    wan_ms:   length(_hr) > 3 && length(_hr[3]) ? +_hr[3] : null,
+};
+
 let output = {
     meta: {
         router_ip:    local_ip,
@@ -240,6 +267,7 @@ let output = {
         last_scan:    now,
         scan_mode,
         device_count: length(devices),
+        health,
     },
     interfaces,
     devices,

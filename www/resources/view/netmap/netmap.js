@@ -167,21 +167,21 @@ const CSS = `
 #nm-map-wrap{flex:1;overflow:auto;min-height:360px;background:linear-gradient(160deg,#0d1b2a 0%,#081016 100%)}
 #nm-map{width:100%;min-width:480px;display:block;user-select:none}
 .nm-detail{width:280px;border:1px solid var(--border-color,#ddd);border-radius:6px;background:var(--bg-color,#fff);display:flex;flex-direction:column;flex-shrink:0}
-.nm-detail-hdr{display:flex;justify-content:space-between;align-items:center;padding:.4rem .75rem;background:var(--heading-bg,#f5f5f5);border-bottom:1px solid var(--border-color,#ddd);font-weight:600;font-size:.85rem}
+.nm-detail-hdr{display:flex;justify-content:space-between;align-items:center;padding:.4rem .75rem;background:var(--heading-bg,#f5f5f5);border-bottom:1px solid var(--border-color,#ddd);font-weight:600;font-size:.85rem;color:#111}
 .nm-detail-body{padding:.75rem;overflow-y:auto;flex:1}
 .nm-detail-icon{display:flex;justify-content:center;margin-bottom:.75rem}
 .nm-kv{display:grid;grid-template-columns:auto 1fr;gap:.25rem .6rem;font-size:.82rem}
-.nm-kv dt{color:var(--muted-color,#888);font-weight:600;white-space:nowrap}
-.nm-kv dd{margin:0;word-break:break-all}
+.nm-kv dt{color:#444!important;font-weight:600;white-space:nowrap}
+.nm-kv dd{margin:0;word-break:break-all;color:#111!important}
 .nm-hidden{display:none!important}
-.nm-tbl-panel{border:1px solid var(--border-color,#ddd);border-radius:4px;overflow:hidden}
-.nm-tbl-hdr{display:flex;justify-content:space-between;align-items:center;padding:.4rem .75rem;background:var(--heading-bg,#f5f5f5);border-bottom:1px solid var(--border-color,#ddd);font-size:.85rem;font-weight:600}
-.nm-search{border:1px solid var(--border-color,#ccc);border-radius:3px;padding:.2rem .5rem;font-size:.82rem;width:240px}
+.nm-tbl-panel{border:1px solid var(--border-color,#ddd);border-radius:4px;overflow:hidden;background:#fff;color:#111}
+.nm-tbl-hdr{display:flex;justify-content:space-between;align-items:center;padding:.4rem .75rem;background:#f5f5f5;border-bottom:1px solid #ddd;font-size:.85rem;font-weight:600;color:#111}
+.nm-search{border:1px solid #ccc;border-radius:3px;padding:.2rem .5rem;font-size:.82rem;width:240px;background:#fff;color:#111}
 .nm-tbl{width:100%;border-collapse:collapse;font-size:.83rem}
-.nm-tbl th,.nm-tbl td{padding:.35rem .6rem;text-align:left;border-bottom:1px solid var(--border-color,#eee);white-space:nowrap}
-.nm-tbl th{background:var(--heading-bg,#f9f9f9);cursor:pointer;user-select:none;font-size:.8rem}
-.nm-tbl th:hover{background:var(--hover-bg,#efefef)}
-.nm-tbl tbody tr:hover{background:var(--row-hover,#f5f8ff);cursor:pointer}
+.nm-tbl th,.nm-tbl td{padding:.35rem .6rem;text-align:left;border-bottom:1px solid var(--border-color,#eee);white-space:nowrap;color:#111}
+.nm-tbl th{background:#f0f0f0;cursor:pointer;user-select:none;font-size:.8rem;color:#333}
+.nm-tbl th:hover{background:#e4e4e4}
+.nm-tbl tbody tr:hover{background:#eef3ff;cursor:pointer}
 .nm-tbl .ic{width:32px;text-align:center}
 .nm-btn{padding:.3rem .7rem;border:1px solid var(--border-color,#ccc);border-radius:3px;cursor:pointer;font-size:.82rem;background:var(--btn-bg,#f5f5f5);color:var(--text-color,#333)}
 .nm-btn:hover{background:var(--btn-hover,#e8e8e8)}
@@ -258,6 +258,15 @@ function sigBars(dbm) {
 		`<span class="nm-sig-b${l.min <= dbm ? ' '+cls : ''}" style="height:${l.h}px"></span>`
 	).join('');
 	return `<span class="nm-sig" title="${dbm} dBm">${bars}</span> ${dbm} dBm`;
+}
+
+function fmtUptime(s) {
+	if (s == null || s === '') return '—';
+	s = +s;
+	if (s < 60)    return s + 's';
+	if (s < 3600)  return Math.floor(s / 60) + 'm';
+	if (s < 86400) return Math.floor(s / 3600) + 'h ' + Math.floor((s % 3600) / 60) + 'm';
+	return Math.floor(s / 86400) + 'd ' + Math.floor((s % 86400) / 3600) + 'h';
 }
 
 function fmtInactive(ms) {
@@ -440,7 +449,7 @@ function renderTopology(svg, data, positions) {
 	const GRP_PAD = 18;
 	const GRP_GAP = 16;
 	const TOP_Y   = 68;
-	const GRP_Y   = 178;
+	const GRP_Y   = 130;
 
 	// All groups share equal width filling the full SVG
 	const numGroups = groups.length || 1;
@@ -476,36 +485,74 @@ function renderTopology(svg, data, positions) {
 		}));
 	}
 
-	// ---- Router node (fixed, not draggable) ----
-	const rG = svgEl('g', { class:'nm-node', 'data-mac':'__router__' });
-	[ NODE_R+18, NODE_R+11 ].forEach((r, i) => rG.appendChild(svgEl('circle', {
-		cx:routerX, cy:TOP_Y, r,
-		fill:'none', stroke:`rgba(100,180,255,${i ? '0.22' : '0.11'})`, 'stroke-width':'1'
-	})));
-	rG.appendChild(svgEl('ellipse', {
-		cx:routerX, cy:TOP_Y+NODE_R+3, rx:NODE_R+10, ry:5,
-		fill:'url(#nm-plat-g)', opacity:'0.7'
+	// ---- Router / health card ----
+	const health  = (data.meta && data.meta.health) ? data.meta.health : {};
+	const CARD_Y  = 8;
+	const CARD_H  = 72;
+	const STATS_X = 230;
+	const _pc = p => p == null ? 'rgba(140,180,220,0.55)' : p < 50 ? 'rgba(80,210,130,0.9)' : p < 80 ? 'rgba(220,180,60,0.9)' : 'rgba(220,80,80,0.9)';
+	const _wc = m => m == null ? 'rgba(140,180,220,0.55)' : m < 50 ? 'rgba(80,210,130,0.9)' : m < 150 ? 'rgba(220,180,60,0.9)' : 'rgba(220,80,80,0.9)';
+
+	// Card background — matches group card style
+	svg.appendChild(svgEl('rect', {
+		x:8, y:CARD_Y, width:svgW-16, height:CARD_H, rx:10,
+		fill:'rgba(20,50,90,0.35)',
+		stroke:'rgba(80,160,240,0.25)',
+		'stroke-width':'1', 'stroke-dasharray':'6 4'
 	}));
-	rG.appendChild(svgEl('circle', {
-		cx:routerX, cy:TOP_Y, r:NODE_R+5,
-		fill:'url(#nm-ng-router)', filter:'url(#nm-glow-r)'
-	}));
-	rG.appendChild(svgEl('circle', {
-		cx:routerX, cy:TOP_Y, r:NODE_R+5,
-		fill:'none', stroke:'rgba(144,186,233,0.55)', 'stroke-width':'1.5'
-	}));
+
+	// Router icon (left)
 	const rIcon = svgEl('g', {
-		transform:`translate(${routerX-12},${TOP_Y-12})`,
-		fill:'none', stroke:'white', 'stroke-opacity':'0.95'
+		transform:`translate(20,${CARD_Y + CARD_H/2 - 12})`,
+		fill:'none', stroke:'rgba(140,200,255,0.85)'
 	});
 	rIcon.innerHTML = ICONS.router;
-	rG.appendChild(rIcon);
-	rG.appendChild(svgEl('text', {
-		x:routerX, y:TOP_Y+NODE_R+20,
-		fill:'#c0d8ee', 'text-anchor':'middle', 'font-size':'11',
+	svg.appendChild(rIcon);
+
+	// Router identity text
+	svg.appendChild(svgEl('text', {
+		x:52, y:CARD_Y+30,
+		fill:'rgba(180,215,245,0.95)', 'font-size':'13',
 		'font-family':'sans-serif', 'font-weight':'700', 'pointer-events':'none'
-	}, data.meta?.router_ip || 'Gateway'));
-	svg.appendChild(rG);
+	}, 'OpenWrt Router'));
+	svg.appendChild(svgEl('text', {
+		x:52, y:CARD_Y+50,
+		fill:'rgba(120,170,220,0.55)', 'font-size':'10',
+		'font-family':'sans-serif', 'pointer-events':'none'
+	}, (data.meta && data.meta.router_ip) || ''));
+
+	// Divider between identity and stats
+	svg.appendChild(svgEl('line', {
+		x1:STATS_X-10, y1:CARD_Y+12, x2:STATS_X-10, y2:CARD_Y+CARD_H-12,
+		stroke:'rgba(80,130,180,0.22)', 'stroke-width':'1'
+	}));
+
+	// Stats
+	const hStats = [
+		{ label:'UPTIME',   value: fmtUptime(health.uptime_s),                              color:'rgba(160,210,255,0.92)' },
+		{ label:'CPU LOAD', value: health.load_pct != null ? health.load_pct + '%' : '—',   color:_pc(health.load_pct)    },
+		{ label:'MEMORY',   value: health.mem_pct  != null ? health.mem_pct  + '%' : '—',   color:_pc(health.mem_pct)     },
+		{ label:'WAN',      value: health.wan_ms   != null ? health.wan_ms   + ' ms': '—',  color:_wc(health.wan_ms)      },
+		{ label:'DEVICES',  value: String((data.meta && data.meta.device_count) || '—'),     color:'rgba(160,210,255,0.92)' },
+	];
+	const statW = (svgW - STATS_X - 16) / hStats.length;
+	hStats.forEach((s, i) => {
+		const cx = STATS_X + i * statW + statW / 2;
+		if (i > 0) svg.appendChild(svgEl('line', {
+			x1:STATS_X+i*statW, y1:CARD_Y+12, x2:STATS_X+i*statW, y2:CARD_Y+CARD_H-12,
+			stroke:'rgba(80,130,180,0.15)', 'stroke-width':'1'
+		}));
+		svg.appendChild(svgEl('text', {
+			x:cx, y:CARD_Y+27, fill:'rgba(100,150,200,0.55)', 'text-anchor':'middle',
+			'font-size':'8', 'font-family':'sans-serif', 'font-weight':'700',
+			'letter-spacing':'0.8', 'pointer-events':'none'
+		}, s.label));
+		svg.appendChild(svgEl('text', {
+			x:cx, y:CARD_Y+57, fill:s.color, 'text-anchor':'middle',
+			'font-size':'17', 'font-family':'sans-serif', 'font-weight':'700',
+			'pointer-events':'none'
+		}, s.value));
+	});
 
 	// ---- Groups and device nodes ----
 	const groupBounds = {};   // mac → { x1, y1, x2, y2 } in SVG coords
@@ -517,7 +564,7 @@ function renderTopology(svg, data, positions) {
 		// Drag bounds for devices in this group (node centre must stay inside)
 		const bx1 = x + GRP_PAD;
 		const bx2 = x + w - GRP_PAD;
-		const by1 = GRP_Y + 20;
+		const by1 = GRP_Y + (isWifi ? 28 : 20);
 		const by2 = GRP_Y - 34 + grpH - NODE_R - 6;
 
 		// Group card
@@ -542,6 +589,58 @@ function renderTopology(svg, data, positions) {
 				fill:'rgba(120,180,230,0.55)', 'text-anchor':'middle',
 				'font-size':'9', 'font-family':'sans-serif', 'pointer-events':'none'
 			}, `"${iface.ssid}"  ch${iface.channel}`));
+		}
+
+		if (isWifi && iface.busy_pct != null) {
+			const barX = x + GRP_PAD + 4;
+			const barW = w - GRP_PAD * 2 - 8;
+			const barY = GRP_Y + 5;
+			const barH = 7;
+
+			// Track
+			svg.appendChild(svgEl('rect', {
+				x:barX, y:barY, width:barW, height:barH, rx:3.5,
+				fill:'rgba(255,255,255,0.07)'
+			}));
+
+			// Busy fill (colour-coded by load)
+			const busyW = Math.round(barW * Math.min(100, iface.busy_pct) / 100);
+			const busyFill = iface.busy_pct < 30 ? 'rgba(80,210,130,0.75)'
+			               : iface.busy_pct < 60 ? 'rgba(220,180,60,0.75)'
+			               : 'rgba(220,80,80,0.75)';
+			if (busyW > 0) {
+				svg.appendChild(svgEl('rect', {
+					x:barX, y:barY, width:busyW, height:barH, rx:3.5,
+					fill:busyFill
+				}));
+			}
+
+			// TX portion overlay (blue, slightly inset)
+			if (iface.tx_pct != null && iface.tx_pct > 0) {
+				const txW = Math.round(barW * Math.min(100, iface.tx_pct) / 100);
+				if (txW > 0) {
+					svg.appendChild(svgEl('rect', {
+						x:barX, y:barY+2, width:txW, height:barH-4, rx:2,
+						fill:'rgba(100,170,255,0.55)'
+					}));
+				}
+			}
+
+			// Noise label (left)
+			if (iface.noise != null) {
+				svg.appendChild(svgEl('text', {
+					x:barX+2, y:barY+barH+9,
+					fill:'rgba(120,180,230,0.45)', 'text-anchor':'start',
+					'font-size':'8', 'font-family':'sans-serif', 'pointer-events':'none'
+				}, `${iface.noise} dBm`));
+			}
+
+			// Busy% label (right)
+			svg.appendChild(svgEl('text', {
+				x:barX+barW-2, y:barY+barH+9,
+				fill:'rgba(120,180,230,0.45)', 'text-anchor':'end',
+				'font-size':'8', 'font-family':'sans-serif', 'pointer-events':'none'
+			}, `${iface.busy_pct}% busy`));
 		}
 
 		// Device nodes — children positioned relative to node centre (0,0)
@@ -704,15 +803,17 @@ function renderTable(tbody, devices, filter, sortKey, sortDir, onSelect) {
 	tbody.innerHTML = rows.map(dev => {
 		const color   = TYPE_COLOR[dev.device_type] || TYPE_COLOR.unknown;
 		const iconKey = ICONS[dev.device_type] ? dev.device_type : 'unknown';
+		const txFailPct = (dev.tx_failed != null && dev.tx_retries != null && (dev.tx_failed + dev.tx_retries) > 0)
+			? Math.round(dev.tx_failed / (dev.tx_failed + dev.tx_retries) * 100) + '%'
+			: (dev.tx_failed != null ? dev.tx_failed + ' pkts' : '—');
 		return `<tr data-mac="${esc(dev.mac)}">
 			<td class="ic">${iconSVG(iconKey, 24, color)}</td>
 			<td>${esc(dev.custom_name || dev.hostname || '') || '<span class="nm-muted">—</span>'}</td>
 			<td>${esc(dev.ip || '—')}</td>
 			<td><code>${esc(dev.mac)}</code></td>
-			<td>${esc(dev.vendor || '—')}</td>
-			<td>${esc(TYPE_LABEL[dev.device_type] || dev.device_type)}</td>
 			<td>${esc(dev.interface || '—')}</td>
 			<td>${sigBars(dev.signal)}</td>
+			<td>${txFailPct}</td>
 			<td class="${dev.online?'nm-online':'nm-offline'}">${dev.online?'● Online':'○ Offline'}</td>
 		</tr>`;
 	}).join('');
@@ -826,10 +927,9 @@ return view.extend({
       <th data-s="hostname">Name</th>
       <th data-s="ip">IP</th>
       <th data-s="mac">MAC</th>
-      <th data-s="vendor">Vendor</th>
-      <th data-s="device_type">Type</th>
       <th data-s="interface">Interface</th>
       <th data-s="signal">Signal</th>
+      <th data-s="tx_failed">TX Failed %</th>
       <th data-s="online">Status</th>
     </tr></thead>
     <tbody id="nm-tbody"></tbody>
